@@ -1,0 +1,6 @@
+@FIAP.HealthMed.API_HostAddress = http://localhost:5134
+
+GET {{FIAP.HealthMed.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

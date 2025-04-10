@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP.HealthMed.API", "src\FIAP.HealthMed.API\FIAP.HealthMed.API.csproj", "{54AECC0E-4261-4977-92B0-B9AD4E865586}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01-UserInterface", "01-UserInterface", "{0B698247-1354-4A17-B2F2-9ED9563A6020}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02-Application", "02-Application", "{D9D7B739-A1DE-456F-B6A1-B226FB6AFA84}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03-Domain", "03-Domain", "{AA4DCAB5-9A90-452A-A8EB-715E3F853F7D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04-Infrastructure", "04-Infrastructure", "{BF11C6BC-E7B1-41A0-A858-11A4F1007872}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{389BBFBD-48E2-4E7B-AD95-EA1306141AD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.Domain", "FIAP_HealthMed.Domain\FIAP_HealthMed.Domain.csproj", "{677F6B83-7DF2-4007-967A-1D1127C6821B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.Application", "FIAP_HealthMed.Application\FIAP_HealthMed.Application.csproj", "{0CF4E26D-6122-424E-8F96-3575D8EF3D12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.Data", "FIAP_HealthMed.Data\FIAP_HealthMed.Data.csproj", "{2AE128D4-F760-4354-A7B6-E3E7B714EB68}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.CrossCutting", "FIAP_HealthMed.CrossCutting\FIAP_HealthMed.CrossCutting.csproj", "{D278994E-990B-4CBE-9A83-C88A58991B11}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{54AECC0E-4261-4977-92B0-B9AD4E865586}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54AECC0E-4261-4977-92B0-B9AD4E865586}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54AECC0E-4261-4977-92B0-B9AD4E865586}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54AECC0E-4261-4977-92B0-B9AD4E865586}.Release|Any CPU.Build.0 = Release|Any CPU
+		{677F6B83-7DF2-4007-967A-1D1127C6821B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{677F6B83-7DF2-4007-967A-1D1127C6821B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{677F6B83-7DF2-4007-967A-1D1127C6821B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{677F6B83-7DF2-4007-967A-1D1127C6821B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CF4E26D-6122-424E-8F96-3575D8EF3D12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CF4E26D-6122-424E-8F96-3575D8EF3D12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CF4E26D-6122-424E-8F96-3575D8EF3D12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CF4E26D-6122-424E-8F96-3575D8EF3D12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AE128D4-F760-4354-A7B6-E3E7B714EB68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AE128D4-F760-4354-A7B6-E3E7B714EB68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AE128D4-F760-4354-A7B6-E3E7B714EB68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AE128D4-F760-4354-A7B6-E3E7B714EB68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D278994E-990B-4CBE-9A83-C88A58991B11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D278994E-990B-4CBE-9A83-C88A58991B11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D278994E-990B-4CBE-9A83-C88A58991B11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D278994E-990B-4CBE-9A83-C88A58991B11}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{54AECC0E-4261-4977-92B0-B9AD4E865586} = {0B698247-1354-4A17-B2F2-9ED9563A6020}
+		{677F6B83-7DF2-4007-967A-1D1127C6821B} = {AA4DCAB5-9A90-452A-A8EB-715E3F853F7D}
+		{0CF4E26D-6122-424E-8F96-3575D8EF3D12} = {D9D7B739-A1DE-456F-B6A1-B226FB6AFA84}
+		{2AE128D4-F760-4354-A7B6-E3E7B714EB68} = {BF11C6BC-E7B1-41A0-A858-11A4F1007872}
+		{D278994E-990B-4CBE-9A83-C88A58991B11} = {BF11C6BC-E7B1-41A0-A858-11A4F1007872}
+	EndGlobalSection
+EndGlobal

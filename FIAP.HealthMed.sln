@@ -15,13 +15,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04-Infrastructure", "04-Inf
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{389BBFBD-48E2-4E7B-AD95-EA1306141AD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.Domain", "FIAP_HealthMed.Domain\FIAP_HealthMed.Domain.csproj", "{677F6B83-7DF2-4007-967A-1D1127C6821B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.Domain", "src\FIAP_HealthMed.Domain\FIAP_HealthMed.Domain.csproj", "{677F6B83-7DF2-4007-967A-1D1127C6821B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.Application", "FIAP_HealthMed.Application\FIAP_HealthMed.Application.csproj", "{0CF4E26D-6122-424E-8F96-3575D8EF3D12}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.Application", "src\FIAP_HealthMed.Application\FIAP_HealthMed.Application.csproj", "{0CF4E26D-6122-424E-8F96-3575D8EF3D12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.Data", "FIAP_HealthMed.Data\FIAP_HealthMed.Data.csproj", "{2AE128D4-F760-4354-A7B6-E3E7B714EB68}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.Data", "src\FIAP_HealthMed.Data\FIAP_HealthMed.Data.csproj", "{2AE128D4-F760-4354-A7B6-E3E7B714EB68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.CrossCutting", "FIAP_HealthMed.CrossCutting\FIAP_HealthMed.CrossCutting.csproj", "{D278994E-990B-4CBE-9A83-C88A58991B11}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.CrossCutting", "src\FIAP_HealthMed.CrossCutting\FIAP_HealthMed.CrossCutting.csproj", "{D278994E-990B-4CBE-9A83-C88A58991B11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

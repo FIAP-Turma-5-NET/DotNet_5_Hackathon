@@ -1,8 +1,8 @@
 ﻿using FIAP_HealthMed.Domain.Enums;
 
-namespace FIAP_HealthMed.Application.Model.Usuario
+namespace FIAP_HealthMed.Application.Model.Auth
 {
-    public class UsuarioLoginModelResponse
+    public class AuthLoginModelResponse
     {
         public string Token { get; set; }
         public string Nome { get; set; }

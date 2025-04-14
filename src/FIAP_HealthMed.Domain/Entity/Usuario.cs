@@ -15,6 +15,7 @@ namespace FIAP_HealthMed.Domain.Entity
 
         public string? CRM { get; set; } 
         public int? EspecialidadeId { get; set; }
+        public Especialidade? Especialidade { get; set; }
 
         public void TratarTelefone(string telefone)
         {

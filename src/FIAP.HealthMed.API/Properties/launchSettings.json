@@ -10,9 +10,10 @@
     },
     "https": {
       "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "Connection_String": "Server=host.docker.internal;port=3360;database=FIAPContato;uid=root;pwd=202406"
+        },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7289;http://localhost:5134"
     },

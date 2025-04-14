@@ -1,4 +1,8 @@
+using System.Data;
+using FIAP_HealthMed.CrossCutting;
 using Microsoft.OpenApi.Models;
+using MySqlConnector;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +57,13 @@ builder.Services.AddSwaggerGen(c =>
 });
 #endregion
 
+//Configuração para buscar a connection
+var connectionString = Environment.GetEnvironmentVariable("Connection_String");
+builder.Services.AddScoped<IDbConnection>((connection) => new MySqlConnection(connectionString));
+
+// Configuration IoC
+builder.Services.AddRegisterCommonServices();
+builder.Services.AddRegisterServices();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

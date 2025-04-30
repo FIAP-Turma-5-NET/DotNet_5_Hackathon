@@ -1,4 +1,6 @@
-﻿using FIAP_HealthMed.Application.Mapper;
+﻿using FIAP_HealthMed.Application.Interface;
+using FIAP_HealthMed.Application.Mapper;
+using FIAP_HealthMed.Application.Service;
 using FIAP_HealthMed.Data.Repository;
 using FIAP_HealthMed.Domain.Interface.Repository;
 using FIAP_HealthMed.Domain.Interface.Services;
@@ -24,9 +26,16 @@ namespace FIAP_HealthMed.CrossCutting
         public static IServiceCollection AddRegisterServices(this IServiceCollection services)
         {
             services.AddScoped<IUsuarioDomainService, UsuarioDomainService>();
+            services.AddScoped<IUsuarioApplicationService, UsuarioApplicationService>();
+
             services.AddScoped<IConsultaDomainService, ConsultaDomainService>();
+            services.AddScoped<IConsultaApplicationService, ConsultaApplicationService>();
+
             services.AddScoped<IHorarioDisponivelDomainService, HorarioDisponivelDomainService>();
+            services.AddScoped<IHorarioDisponivelApplicationService, HorarioDisponivelApplicationService>();
+
             services.AddScoped<IEspecialidadeDomainService, EspecialidadeDomainService>();
+            services.AddScoped<IEspecialidadeApplicationService, EspecialidadeApplicationService>();
            
             
             //services.AddScoped<IUsuarioApplicationService, UsuarioApplicationService>();

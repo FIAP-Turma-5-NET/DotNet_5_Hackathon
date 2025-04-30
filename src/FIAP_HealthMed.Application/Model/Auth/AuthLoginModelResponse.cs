@@ -4,8 +4,8 @@ namespace FIAP_HealthMed.Application.Model.Auth
 {
     public class AuthLoginModelResponse
     {
-        public string Token { get; set; }
-        public string Nome { get; set; }
+        public required string Token { get; set; }
+        public required string Nome { get; set; }
         public Role Role { get; set; }
     }
 }

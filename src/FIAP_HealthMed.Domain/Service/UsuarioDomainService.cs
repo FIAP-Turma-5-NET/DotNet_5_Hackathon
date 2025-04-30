@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FIAP_HealthMed.Domain.Entity;
+﻿using FIAP_HealthMed.Domain.Entity;
 using FIAP_HealthMed.Domain.Interface.Repository;
 
 namespace FIAP_HealthMed.Domain.Service
@@ -15,6 +10,15 @@ namespace FIAP_HealthMed.Domain.Service
         public UsuarioDomainService(IUsuarioRepository usuarioRepository)
         {
             _usuarioRepository = usuarioRepository;
+        }
+
+        public async Task<bool> CadastrarAsync(Usuario usuario)
+        {
+            usuario.TratarTelefone(usuario.Telefone);
+
+            var id = await _usuarioRepository.CadastrarAsync(usuario);
+
+            return id > 0;
         }
 
         public async Task<Usuario?> ObterPorIdAsync(int id)
@@ -31,5 +35,7 @@ namespace FIAP_HealthMed.Domain.Service
         {
             return await _usuarioRepository.ListarMedicosAsync(especialidade);
         }
+
+
     }
 }

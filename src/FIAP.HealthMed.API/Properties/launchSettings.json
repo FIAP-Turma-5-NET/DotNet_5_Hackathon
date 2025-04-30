@@ -10,9 +10,10 @@
     },
     "https": {
       "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "Connection_String": "Server=localhost;Port=3306;Database=HealthMed;Uid=root;Pwd=root;SslMode=none;"
+        },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7289;http://localhost:5134"
     },

@@ -19,7 +19,6 @@ namespace FIAP_HealthMed.Domain.Service
         {
             var response = string.Empty;
 
-            // Verifica se o horário existe e está livre
             var horarios = await _horarioRepository.ObterPorMedicoIdAsync(consulta.MedicoId);
             var horarioDisponivel = horarios.FirstOrDefault(h => h.DataHora == consulta.DataHora && h.Ocupado == false);
 
@@ -45,37 +44,39 @@ namespace FIAP_HealthMed.Domain.Service
             return response;
         }
 
-        public async Task<string> CancelarConsultaAsync(int consultaId, string justificativa)
+        public async Task<string> CancelarConsultaAsync(int consultaId, int usuarioId, string justificativa)
         {
-            var response = string.Empty;
+            if (string.IsNullOrWhiteSpace(justificativa))
+                throw new InvalidOperationException("Justificativa de cancelamento é obrigatória.");
 
             var consulta = await _consultaRepository.ObterPorIdAsync(consultaId);
 
             if (consulta == null)
                 throw new InvalidOperationException("Consulta não encontrada.");
 
+            if (consulta.PacienteId != usuarioId)
+                throw new InvalidOperationException("Apenas o paciente pode cancelar a consulta.");
+
             if (consulta.Status == StatusConsulta.Cancelada)
-                throw new InvalidOperationException("Consulta já está cancelada.");
+                throw new InvalidOperationException("A consulta já está cancelada.");
 
             var sucesso = await _consultaRepository
                 .AtualizarStatusAsync(consultaId, StatusConsulta.Cancelada, justificativa);
 
-            if (sucesso)
-                response = "Consulta cancelada com sucesso.";
-            else
-                throw new InvalidOperationException("Erro ao cancelar consulta.");
-
-            return response;
+            return sucesso
+                ? "Consulta cancelada com sucesso."
+                : throw new InvalidOperationException("Erro ao cancelar a consulta.");
         }
 
-        public async Task<string> AceitarConsultaAsync(int consultaId)
+        public async Task<string> AceitarConsultaAsync(int consultaId, int usuarioId)
         {
-            var response = string.Empty;
-
             var consulta = await _consultaRepository.ObterPorIdAsync(consultaId);
 
             if (consulta == null)
                 throw new InvalidOperationException("Consulta não encontrada.");
+
+            if (consulta.MedicoId != usuarioId)
+                throw new InvalidOperationException("Apenas o médico responsável pode aceitar a consulta.");
 
             if (consulta.Status != StatusConsulta.Pendente)
                 throw new InvalidOperationException("A consulta já foi processada.");
@@ -83,22 +84,20 @@ namespace FIAP_HealthMed.Domain.Service
             var sucesso = await _consultaRepository
                 .AtualizarStatusAsync(consultaId, StatusConsulta.Aceita);
 
-            if (sucesso)
-                response = "Consulta aceita com sucesso.";
-            else
-                throw new InvalidOperationException("Erro ao aceitar consulta.");
-
-            return response;
+            return sucesso
+                ? "Consulta aceita com sucesso."
+                : throw new InvalidOperationException("Erro ao aceitar consulta.");
         }
 
-        public async Task<string> RecusarConsultaAsync(int consultaId)
+        public async Task<string> RecusarConsultaAsync(int consultaId, int usuarioId)
         {
-            var response = string.Empty;
-
             var consulta = await _consultaRepository.ObterPorIdAsync(consultaId);
 
             if (consulta == null)
                 throw new InvalidOperationException("Consulta não encontrada.");
+
+            if (consulta.MedicoId != usuarioId)
+                throw new InvalidOperationException("Apenas o médico responsável pode recusar a consulta.");
 
             if (consulta.Status != StatusConsulta.Pendente)
                 throw new InvalidOperationException("A consulta já foi processada.");
@@ -106,12 +105,9 @@ namespace FIAP_HealthMed.Domain.Service
             var sucesso = await _consultaRepository
                 .AtualizarStatusAsync(consultaId, StatusConsulta.Recusada);
 
-            if (sucesso)
-                response = "Consulta recusada com sucesso.";
-            else
-                throw new InvalidOperationException("Erro ao recusar consulta.");
-
-            return response;
+            return sucesso
+                ? "Consulta recusada com sucesso."
+                : throw new InvalidOperationException("Erro ao recusar consulta.");
         }
 
         public async Task<IEnumerable<Consulta>> ObterConsultasPorUsuarioAsync(int usuarioId, Role role)

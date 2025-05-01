@@ -1,6 +1,6 @@
 ﻿namespace FIAP_HealthMed.Application.Model.HorarioDisponivel
 {
-    internal class HorarioDisponivelModelResponse
+    public record HorarioDisponivelModelResponse
     {
         public int Id { get; set; }
         public DateTime DataHora { get; set; }

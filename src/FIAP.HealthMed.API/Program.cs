@@ -23,7 +23,6 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API para gerenciamento de consultas médicas e usuários"
     });
 
-    // Adiciona a definição do esquema de segurança (Bearer/JWT):
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n
@@ -31,11 +30,10 @@ builder.Services.AddSwaggerGen(c =>
                       \r\n\r\nExample: 'Bearer 12345abcdef'",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey, // Use ApiKey para Bearer
+        Type = SecuritySchemeType.ApiKey, 
         Scheme = "Bearer"
     });
 
-    // Adiciona o requisito de segurança (dizendo que a API usa Bearer):
     c.AddSecurityRequirement(new OpenApiSecurityRequirement()
       {
           {
@@ -44,14 +42,14 @@ builder.Services.AddSwaggerGen(c =>
                   Reference = new OpenApiReference
                   {
                       Type = ReferenceType.SecurityScheme,
-                      Id = "Bearer" // Este ID deve corresponder ao do AddSecurityDefinition
+                      Id = "Bearer" 
                   },
-                  Scheme = "oauth2", //"Bearer",  // "oauth2" ou "Bearer"
+                  Scheme = "oauth2",
                   Name = "Bearer",
                   In = ParameterLocation.Header,
 
               },
-              new List<string>() // Lista vazia = aplica globalmente
+              new List<string>() 
           }
       });
 });

@@ -2,7 +2,7 @@
 
 namespace FIAP_HealthMed.Application.Model.Usuario
 {
-    public class UsuarioModelRequest
+    public record UsuarioModelRequest
     {
         public required string Nome { get; set; }
         public required string CPF { get; set; }
@@ -12,7 +12,7 @@ namespace FIAP_HealthMed.Application.Model.Usuario
         public required string Telefone { get; set; }
         public required Role Role { get; set; }
 
-        // Só se for Médico
+        // Médico
         public string? CRM { get; set; }
         public int? EspecialidadeId { get; set; }
     }

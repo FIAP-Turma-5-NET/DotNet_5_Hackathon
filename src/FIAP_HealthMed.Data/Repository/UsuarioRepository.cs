@@ -2,6 +2,7 @@
 using Dapper;
 using FIAP_HealthMed.Data.Context;
 using FIAP_HealthMed.Domain.Entity;
+using FIAP_HealthMed.Domain.Enums;
 using FIAP_HealthMed.Domain.Interface.Repository;
 
 namespace FIAP_HealthMed.Data.Repository
@@ -48,17 +49,31 @@ namespace FIAP_HealthMed.Data.Repository
             return result > 0;
         }
 
-        public async Task<IEnumerable<Usuario>> ListarMedicosAsync(string? especialidade = null)
+        public async Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null)
         {
-            var sql = "SELECT * FROM Usuario WHERE Role = 0 AND Deleted_at IS NULL";
+            var sql = @"
+                      SELECT u.*, 
+                             e.Id, e.Nome, e.Created_at, e.Updated_at, e.Deleted_at
+                      FROM Usuario u
+                      INNER JOIN Especialidade e ON u.EspecialidadeId = e.Id
+                      WHERE u.Role = @role AND u.Deleted_at IS NULL";
 
-            if (!string.IsNullOrEmpty(especialidade))
-            {
-                sql += " AND EspecialidadeId = @EspecialidadeId";
-                return await context.QueryAsync<Usuario>(sql, new { EspecialidadeId = int.Parse(especialidade) });
-            }
+            if (especialidadeId.HasValue)
+                sql += " AND u.EspecialidadeId = @especialidadeId";
 
-            return await context.QueryAsync<Usuario>(sql);
+            var usuarios =  await context.QueryAsync<Usuario, Especialidade, Usuario>(
+                sql,
+                (usuario, especialidade) =>
+                {
+                    usuario.Especialidade = especialidade;
+                    return usuario;
+                },
+                new { role = Role.Medico, especialidadeId },
+                splitOn: "Id"
+            );
+
+            return usuarios;
         }
+
     }
 }

@@ -2,7 +2,7 @@
 
 namespace FIAP_HealthMed.Application.Model.Consulta
 {
-    public class ConsultaModelResponse
+    public record ConsultaModelResponse
     {
         public int Id { get; set; }
         public DateTime DataHora { get; set; }

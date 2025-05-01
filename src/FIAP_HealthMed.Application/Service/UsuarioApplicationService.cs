@@ -38,9 +38,9 @@ namespace FIAP_HealthMed.Application.Service
 
         }
 
-        public async Task<IEnumerable<UsuarioModelResponse>> ListarMedicos(string? especialidade)
+        public async Task<IEnumerable<UsuarioModelResponse>> ListarMedicos(int? especialidadeId = null)
         {
-            var result = await _usuarioDomainService.ListarMedicosAsync(especialidade);
+            var result = await _usuarioDomainService.ListarMedicosAsync(especialidadeId);
 
             return _mapper.Map<IEnumerable<UsuarioModelResponse>>(result);
         }

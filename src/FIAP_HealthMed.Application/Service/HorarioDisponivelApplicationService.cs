@@ -25,11 +25,11 @@ namespace FIAP_HealthMed.Application.Service
             await _horarioDisponivelDomainService.EditarHorarioAsync(horarioId, novoHorario);
         }
 
-        public async Task<IEnumerable<HorarioDisponivelModelRequest>> ObterHorarios(int medicoId)
+        public async Task<IEnumerable<HorarioDisponivelModelResponse>> ObterHorarios(int medicoId)
         {
             var entities = await _horarioDisponivelDomainService.ObterPorMedicoIdAsync(medicoId);
 
-            return _mapper.Map<IEnumerable<HorarioDisponivelModelRequest>>(entities);
+            return _mapper.Map<IEnumerable<HorarioDisponivelModelResponse>>(entities);
         }
 
         public async Task RemoverHorario(int horarioId)

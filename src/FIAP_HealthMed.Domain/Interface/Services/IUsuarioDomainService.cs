@@ -7,6 +7,6 @@ namespace FIAP_HealthMed.Domain.Interface.Repository
         Task<bool> CadastrarAsync(Usuario usuario);
         Task<Usuario?> ObterPorIdAsync(int id);
         Task<bool> VerificarExistentePorCpfOuEmailAsync(string cpf, string email);
-        Task<IEnumerable<Usuario>> ListarMedicosAsync(string? especialidade = null);
+        Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null);
     }
 }

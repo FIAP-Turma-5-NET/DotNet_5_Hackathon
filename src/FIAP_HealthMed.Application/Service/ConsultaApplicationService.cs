@@ -17,9 +17,9 @@ namespace FIAP_HealthMed.Application.Service
             _consultaDomainService = consultaDomainService;
             _mapper = mapper;
         }
-        public async Task<string> AceitarConsulta(int consultaId)
+        public async Task<string> AceitarConsulta(int consultaId, int usuarioId)
         {
-            return await _consultaDomainService.AceitarConsultaAsync(consultaId);
+            return await _consultaDomainService.AceitarConsultaAsync(consultaId, usuarioId);
         }
 
         public async Task<string> AgendarConsulta(ConsultaModelRequest request)
@@ -28,9 +28,9 @@ namespace FIAP_HealthMed.Application.Service
             return await _consultaDomainService.AgendarConsultaAsync(entity);
         }
 
-        public Task<string> CancelarConsulta(int consultaId, string justificativa)
+        public Task<string> CancelarConsulta(int consultaId, int usuarioId, string justificativa)
         {
-            return _consultaDomainService.CancelarConsultaAsync(consultaId, justificativa);
+            return _consultaDomainService.CancelarConsultaAsync(consultaId, usuarioId, justificativa);
         }
 
         public async Task<IEnumerable<ConsultaModelResponse>> ObterConsultas(int usuarioId, Role role)
@@ -40,9 +40,9 @@ namespace FIAP_HealthMed.Application.Service
             return _mapper.Map<IEnumerable<ConsultaModelResponse>>(entities);
         }
 
-        public async Task<string> RecusarConsulta(int consultaId)
+        public async Task<string> RecusarConsulta(int consultaId, int usuarioId)
         {
-            return await _consultaDomainService.RecusarConsultaAsync(consultaId);
+            return await _consultaDomainService.RecusarConsultaAsync(consultaId, usuarioId);
         }
     }
 }

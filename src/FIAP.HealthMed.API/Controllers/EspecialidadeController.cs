@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FIAP_HealthMed.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class EspecialidadeController : ControllerBase
     {

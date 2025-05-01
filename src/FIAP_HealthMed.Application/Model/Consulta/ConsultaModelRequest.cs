@@ -1,6 +1,6 @@
 ﻿namespace FIAP_HealthMed.Application.Model.Consulta
 {
-    public class ConsultaModelRequest
+    public record ConsultaModelRequest
     {
         public required DateTime DataHora { get; set; }
         public decimal Valor { get; set; }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FIAP_HealthMed.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class UsuarioController : ControllerBase
     {
@@ -47,9 +47,9 @@ namespace FIAP_HealthMed.API.Controllers
         /// <response code="200">Sucesso</response>
         /// <response code="404">Nenhum médico encontrado</response>
         [HttpGet("medicos")]
-        public async Task<IActionResult> ListarMedicos([FromQuery] string? especialidade)
+        public async Task<IActionResult> ListarMedicos([FromQuery] int? especialidadeId)
         {
-            var result = await _usuarioApplicationService.ListarMedicos(especialidade);
+            var result = await _usuarioApplicationService.ListarMedicos(especialidadeId);
             return result.Any() ? Ok(result) : NotFound();
         }
 

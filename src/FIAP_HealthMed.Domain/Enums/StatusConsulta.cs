@@ -2,9 +2,9 @@
 {
     public enum StatusConsulta
     {
-        Pendente,
-        Aceita,
-        Recusada,
-        Cancelada
+        Pendente = 1,
+        Aceita = 2,
+        Recusada  = 3,
+        Cancelada = 4
     }
 }

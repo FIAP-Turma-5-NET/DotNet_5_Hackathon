@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FIAP_HealthMed.Application.Model.HorarioDisponivel
 {
-    public class HorarioDisponivelModelRequest
+    public record HorarioDisponivelModelRequest
     {
         public required DateTime DataHora { get; set; }
         public int MedicoId { get; set; }

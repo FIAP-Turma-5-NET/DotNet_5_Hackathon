@@ -31,9 +31,9 @@ namespace FIAP_HealthMed.Domain.Service
             return await _usuarioRepository.VerificarExistentePorCpfOuEmailAsync(cpf, email);
         }
 
-        public async Task<IEnumerable<Usuario>> ListarMedicosAsync(string? especialidade = null)
+        public async Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null)
         {
-            return await _usuarioRepository.ListarMedicosAsync(especialidade);
+            return await _usuarioRepository.ListarMedicosAsync(especialidadeId);
         }
 
 

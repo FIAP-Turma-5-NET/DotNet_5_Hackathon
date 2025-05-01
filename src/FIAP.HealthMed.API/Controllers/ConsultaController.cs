@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FIAP_HealthMed.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class ConsultaController : ControllerBase
     {
@@ -40,9 +40,9 @@ namespace FIAP_HealthMed.API.Controllers
         /// Cancelar uma consulta
         /// </summary>
         [HttpPut("cancelar/{id}")]
-        public async Task<IActionResult> Cancelar(int id, [FromBody] string justificativa)
+        public async Task<IActionResult> Cancelar(int id, [FromBody] CancelamentoConsultaRequest request)
         {
-            var result = await _consultaService.CancelarConsulta(id, justificativa);
+            var result = await _consultaService.CancelarConsulta(id, request.UsuarioId,request.Justificativa);
             return Ok(result);
         }
 
@@ -50,9 +50,9 @@ namespace FIAP_HealthMed.API.Controllers
         /// Aceitar uma consulta
         /// </summary>
         [HttpPut("aceitar/{id}")]
-        public async Task<IActionResult> Aceitar(int id)
+        public async Task<IActionResult> Aceitar(int id, int usuarioId)
         {
-            var result = await _consultaService.AceitarConsulta(id);
+            var result = await _consultaService.AceitarConsulta(id,usuarioId);
             return Ok(result);
         }
 
@@ -60,9 +60,9 @@ namespace FIAP_HealthMed.API.Controllers
         /// Recusar uma consulta
         /// </summary>
         [HttpPut("recusar/{id}")]
-        public async Task<IActionResult> Recusar(int id)
+        public async Task<IActionResult> Recusar(int id, [FromQuery] int usuarioId)
         {
-            var result = await _consultaService.RecusarConsulta(id);
+            var result = await _consultaService.RecusarConsulta(id,usuarioId);
             return Ok(result);
         }
     }

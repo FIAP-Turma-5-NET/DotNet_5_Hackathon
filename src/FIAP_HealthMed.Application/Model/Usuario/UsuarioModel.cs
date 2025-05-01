@@ -7,7 +7,7 @@ using FIAP_HealthMed.Domain.Enums;
 
 namespace FIAP_HealthMed.Application.Model.Usuario
 {
-    public class UsuarioModel
+    public record UsuarioModel
     {
         public required string Nome { get; set; }
         public required string CPF { get; set; }

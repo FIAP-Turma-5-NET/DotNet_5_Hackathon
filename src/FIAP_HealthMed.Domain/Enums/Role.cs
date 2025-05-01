@@ -2,7 +2,8 @@
 {
     public enum Role
     {
-        Medico,
-        Paciente
+        
+        Medico = 1,
+        Paciente = 2
     }
 }

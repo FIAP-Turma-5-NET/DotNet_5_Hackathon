@@ -7,5 +7,6 @@ namespace FIAP_HealthMed.Application.Interface
         Task<string> CadastrarAsync(UsuarioModelRequest request);
         Task<IEnumerable<UsuarioModelResponse>> ListarMedicos(int? especialidadeId = null);
         Task<UsuarioModelResponse> ObterPorId(int id);
+        Task<string> InserirEspecialidadesUsuarioAsync(int usuarioId, IEnumerable<int> especialidadeIds);
     }
 }

@@ -11,9 +11,10 @@ namespace FIAP_HealthMed.Application.Model.Usuario
         public required string DDD { get; set; }
         public required string Telefone { get; set; }
         public required Role Role { get; set; }
+        public bool Ativo { get; set; }
 
         // Médico
         public string? CRM { get; set; }
-        public int? EspecialidadeId { get; set; }
+        public List<int?> EspecialidadeIds { get; set; } = new();
     }
 }

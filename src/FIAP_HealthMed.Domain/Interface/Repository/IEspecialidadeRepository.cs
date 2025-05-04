@@ -12,5 +12,6 @@ namespace FIAP_HealthMed.Domain.Interface.Repository
         Task<int> CadastrarAsync(Especialidade especialidade);
         Task<IEnumerable<Especialidade>> ObterTodasAsync();
         Task<Especialidade?> ObterPorIdAsync(int id);
+        Task<IEnumerable<Especialidade>> ObterPorIdsAsync(IEnumerable<int?> ids);
     }
 }

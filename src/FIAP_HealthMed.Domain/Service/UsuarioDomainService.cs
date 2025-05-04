@@ -12,13 +12,13 @@ namespace FIAP_HealthMed.Domain.Service
             _usuarioRepository = usuarioRepository;
         }
 
-        public async Task<bool> CadastrarAsync(Usuario usuario)
+        public async Task<int> CadastrarAsync(Usuario usuario)
         {
             usuario.TratarTelefone(usuario.Telefone);
 
             var id = await _usuarioRepository.CadastrarAsync(usuario);
 
-            return id > 0;
+            return id;
         }
 
         public async Task<Usuario?> ObterPorIdAsync(int id)
@@ -36,6 +36,11 @@ namespace FIAP_HealthMed.Domain.Service
             return await _usuarioRepository.ListarMedicosAsync(especialidadeId);
         }
 
+        public async Task InserirEspecialidadesUsuarioAsync(int usuarioId, IEnumerable<int> especialidadeIds)
+        {
+            await _usuarioRepository.InserirEspecialidadesUsuarioAsync(usuarioId, especialidadeIds);
+        }
 
+   
     }
 }

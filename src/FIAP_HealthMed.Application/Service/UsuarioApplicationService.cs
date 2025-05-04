@@ -3,7 +3,9 @@ using FIAP_HealthMed.Application.Helpers;
 using FIAP_HealthMed.Application.Interface;
 using FIAP_HealthMed.Application.Model.Usuario;
 using FIAP_HealthMed.Domain.Entity;
+using FIAP_HealthMed.Domain.Enums;
 using FIAP_HealthMed.Domain.Interface.Repository;
+using FIAP_HealthMed.Domain.Interface.Services;
 
 
 namespace FIAP_HealthMed.Application.Service
@@ -11,32 +13,51 @@ namespace FIAP_HealthMed.Application.Service
     public class UsuarioApplicationService : IUsuarioApplicationService
     {
         private readonly IUsuarioDomainService _usuarioDomainService;
+        private readonly IEspecialidadeDomainService _especialidadeDomainService;
         private readonly IMapper _mapper;
 
-        public UsuarioApplicationService(IUsuarioDomainService usuarioDomainService, IMapper mapper)
+        public UsuarioApplicationService(IUsuarioDomainService usuarioDomainService, IEspecialidadeDomainService especialidadeDomainService, IMapper mapper)
         {
             _usuarioDomainService = usuarioDomainService;
+            _especialidadeDomainService = especialidadeDomainService;
             _mapper = mapper;
-        }
+        } 
 
         public async Task<string> CadastrarAsync(UsuarioModelRequest request)
         {
             var existe = await _usuarioDomainService.VerificarExistentePorCpfOuEmailAsync(request.CPF, request.Email);
-
             if (existe)
-            {
-                throw new InvalidOperationException("Usuário já existente com esse CPF ou Email");
-            }
+                throw new InvalidOperationException("Usuário já cadastrado com este CPF ou Email.");
 
             var usuario = _mapper.Map<Usuario>(request);
-            usuario.SenhaHash = PasswordHasher.HashPassword(request.Senha);
             usuario.TratarTelefone(request.Telefone);
+            usuario.SenhaHash = PasswordHasher.HashPassword(request.Senha);
 
-            var sucesso = await _usuarioDomainService.CadastrarAsync(usuario);
+            var usuarioId = await _usuarioDomainService.CadastrarAsync(usuario);
 
-            return sucesso ? "Usuário cadastrado com sucesso." : throw new InvalidOperationException("Erro ao cadastrar usuário");
+            if (request.Role == Role.Medico && request.EspecialidadeIds != null)
+            {
+                
+                var especialidadeIds = request.EspecialidadeIds
+                    .Where(id => id.HasValue)   
+                    .Select(id => id!.Value)    
+                    .Distinct()                 
+                    .ToList();
 
+                if (especialidadeIds.Any())
+                    await _usuarioDomainService.InserirEspecialidadesUsuarioAsync(usuarioId, especialidadeIds);
+            }
+
+            return "Usuário cadastrado com sucesso!";
         }
+
+        public async Task<string> InserirEspecialidadesUsuarioAsync(int usuarioId, IEnumerable<int> especialidadeIds)
+        {
+             await _usuarioDomainService.InserirEspecialidadesUsuarioAsync(usuarioId, especialidadeIds);
+
+            return "Especialidade vinculada com sucesso!";
+        }
+
 
         public async Task<IEnumerable<UsuarioModelResponse>> ListarMedicos(int? especialidadeId = null)
         {

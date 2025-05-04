@@ -28,5 +28,10 @@ namespace FIAP_HealthMed.Domain.Service
         {
             return await _especialidadeRepository.ObterPorIdAsync(id);
         }
+
+        public async Task<IEnumerable<Especialidade>> ObterPorIdsAsync(List<int?> ids)
+        {
+            return await _especialidadeRepository.ObterPorIdsAsync(ids);
+        }
     }
 }

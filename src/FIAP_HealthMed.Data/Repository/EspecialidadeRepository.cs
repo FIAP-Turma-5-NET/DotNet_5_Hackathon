@@ -31,5 +31,11 @@ namespace FIAP_HealthMed.Data.Repository
             var sql = "SELECT * FROM Especialidade WHERE Id = @Id AND Deleted_at IS NULL";
             return await context.QueryFirstOrDefaultAsync<Especialidade>(sql, new { Id = id });
         }
+
+        public async Task<IEnumerable<Especialidade>> ObterPorIdsAsync(IEnumerable<int?> ids)
+        {
+            var sql = "SELECT * FROM Especialidade WHERE Id IN @Ids AND Deleted_at IS NULL";
+            return await context.QueryAsync<Especialidade>(sql, new { Ids = ids });
+        }
     }
 }

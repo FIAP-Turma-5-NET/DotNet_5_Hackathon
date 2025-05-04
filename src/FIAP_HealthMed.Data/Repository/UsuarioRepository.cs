@@ -21,14 +21,14 @@ namespace FIAP_HealthMed.Data.Repository
             parametros.Add("@Telefone", usuario.Telefone);
             parametros.Add("@Role", (int)usuario.Role);
             parametros.Add("@CRM", usuario.CRM);
-            parametros.Add("@EspecialidadeId", usuario.EspecialidadeId);
 
-            var sql = @"INSERT INTO Usuario (Nome, CPF, Email, SenhaHash, DDD, Telefone, Role, CRM, EspecialidadeId)
-                        VALUES (@Nome, @CPF, @Email, @SenhaHash, @DDD, @Telefone, @Role, @CRM, @EspecialidadeId);
-                        SELECT LAST_INSERT_ID();";
+            var sql = @"INSERT INTO Usuario (Nome, CPF, Email, SenhaHash, DDD, Telefone, Role, CRM)
+                VALUES (@Nome, @CPF, @Email, @SenhaHash, @DDD, @Telefone, @Role, @CRM);
+                SELECT LAST_INSERT_ID();";
 
             return await context.ExecuteScalarAsync<int>(sql, parametros);
         }
+
 
         public async Task<Usuario?> ObterPorIdAsync(int id)
         {
@@ -52,28 +52,60 @@ namespace FIAP_HealthMed.Data.Repository
         public async Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null)
         {
             var sql = @"
-                      SELECT u.*, 
-                             e.Id, e.Nome, e.Created_at, e.Updated_at, e.Deleted_at
-                      FROM Usuario u
-                      INNER JOIN Especialidade e ON u.EspecialidadeId = e.Id
-                      WHERE u.Role = @role AND u.Deleted_at IS NULL";
+                        SELECT
+                            u.*,
+                            e.Id AS EspecialidadeId,
+                            e.Nome AS EspecialidadeNome,
+                            e.Created_at,
+                            e.Updated_at,
+                            e.Deleted_at
+                        FROM Usuario u
+                        LEFT JOIN Usuario_Especialidade ue ON ue.UsuarioId = u.Id
+                        LEFT JOIN Especialidade e ON e.Id = ue.EspecialidadeId
+                        WHERE u.Role = @role
+                        AND u.Ativo = 1
+                        AND u.Deleted_at IS NULL";
 
             if (especialidadeId.HasValue)
-                sql += " AND u.EspecialidadeId = @especialidadeId";
+                sql += " AND ue.EspecialidadeId = @especialidadeId";
 
-            var usuarios =  await context.QueryAsync<Usuario, Especialidade, Usuario>(
+            var dict = new Dictionary<int, Usuario>();
+
+            await context.QueryAsync<Usuario, Especialidade, Usuario>(
                 sql,
                 (usuario, especialidade) =>
                 {
-                    usuario.Especialidade = especialidade;
-                    return usuario;
+                    if (!dict.TryGetValue(usuario.Id, out var uEntry))
+                    {
+                        uEntry = usuario;
+                        uEntry.Especialidades = new List<Especialidade>();
+                        dict.Add(uEntry.Id, uEntry);
+                    }
+                    if (especialidade != null && especialidade.Id != 0)
+                    {
+                        uEntry.Especialidades.Add(especialidade);
+                    }
+                    return uEntry;
                 },
                 new { role = Role.Medico, especialidadeId },
-                splitOn: "Id"
+                splitOn: "EspecialidadeId"
             );
 
-            return usuarios;
+            return dict.Values;
         }
 
+
+        public async Task InserirEspecialidadesUsuarioAsync(int usuarioId, IEnumerable<int> especialidadeIds)
+        {
+            var sql = @"INSERT INTO Usuario_Especialidade (UsuarioId, EspecialidadeId)
+                        VALUES (@UsuarioId, @EspecialidadeId);";
+
+            foreach(var especialidadeId in especialidadeIds)
+            {
+                await context.ExecuteAsync(sql, new { UsuarioId = usuarioId, EspecialidadeId = especialidadeId });
+            }
+        }
+
+      
     }
 }

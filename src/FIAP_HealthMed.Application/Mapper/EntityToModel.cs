@@ -12,7 +12,7 @@ namespace FIAP_HealthMed.Application.Mapper
         public EntityToModel() 
         {
             CreateMap<Usuario, UsuarioModelResponse>()
-                .ForMember(dest => dest.Especialidade, opt => opt.MapFrom(src => src.Especialidade != null ? src.Especialidade.Nome : null));
+                .ForMember(dest => dest.Especialidades, opt => opt.MapFrom(src => src.Especialidades.Select(e => e.Nome).ToList()));
 
             CreateMap<Consulta, ConsultaModelResponse>();
 

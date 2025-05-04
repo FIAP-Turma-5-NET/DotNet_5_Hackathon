@@ -1,4 +1,5 @@
-﻿using FIAP_HealthMed.Domain.Enums;
+﻿using System.Collections.Generic;
+using FIAP_HealthMed.Domain.Enums;
 
 namespace FIAP_HealthMed.Domain.Entity
 {
@@ -13,9 +14,10 @@ namespace FIAP_HealthMed.Domain.Entity
 
         public required Role Role { get; set; }
 
-        public string? CRM { get; set; } 
-        public int? EspecialidadeId { get; set; }
-        public Especialidade? Especialidade { get; set; }
+        public bool Ativo { get; set; }
+
+        public string? CRM { get; set; }
+        public ICollection<Especialidade>? Especialidades { get; set; }
 
         public void TratarTelefone(string telefone)
         {

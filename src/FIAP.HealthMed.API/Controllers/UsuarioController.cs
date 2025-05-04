@@ -38,6 +38,13 @@ namespace FIAP_HealthMed.API.Controllers
         }
 
 
+        [HttpPost("{usuarioId}/especialidades")]
+        public async Task<IActionResult> AdicionarEspecialidades(int usuarioId,[FromBody] UsuarioEspecialidadeModelRequest request)
+        {
+            var result = await _usuarioApplicationService.InserirEspecialidadesUsuarioAsync(usuarioId, request.EspecialidadeIds);
+            
+            return Ok(new { message = result });
+        }
 
         /// <summary>
         /// Listar médicos por especialidade (caso receba uma especialidade)

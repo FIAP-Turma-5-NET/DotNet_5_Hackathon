@@ -12,18 +12,16 @@ namespace FIAP_HealthMed.Application.Mapper
         public ModelToEntity() 
         {
             CreateMap<UsuarioModelRequest, Usuario>()
-                .ForMember(dest => dest.SenhaHash, opt => opt.Ignore()) 
-                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
-                .ForMember(dest => dest.EspecialidadeId, opt => opt.MapFrom(src => src.EspecialidadeId))
-                .ForMember(dest => dest.CRM, opt => opt.MapFrom(src => src.CRM));
+            .ForMember(dest => dest.SenhaHash, opt => opt.Ignore()) 
+            .ForMember(dest => dest.Especialidades, opt => opt.Ignore()) 
+            .ForMember(dest => dest.Telefone, opt => opt.Ignore()) 
+            .ForMember(dest => dest.DDD, opt => opt.Ignore());     
 
             CreateMap<ConsultaModelRequest, Consulta>();
 
             CreateMap<EspecialidadeModelRequest, Especialidade>();
 
             CreateMap<HorarioDisponivelModelRequest, HorarioDisponivel>();
-
-
 
         }
     }

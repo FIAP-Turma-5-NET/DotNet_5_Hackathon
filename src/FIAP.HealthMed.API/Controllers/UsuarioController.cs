@@ -5,6 +5,8 @@ using FIAP_HealthMed.Domain.Entity;
 
 using Microsoft.AspNetCore.Mvc;
 
+using Org.BouncyCastle.Asn1.Ocsp;
+
 namespace FIAP_HealthMed.API.Controllers
 {
     [Route("api/v1/[controller]")]
@@ -56,10 +58,10 @@ namespace FIAP_HealthMed.API.Controllers
         /// <response code="200">Sucesso</response>
         /// <response code="404">Nenhum médico encontrado</response>
         [HttpGet("medicos")]
-        public async Task<IActionResult> ListarMedicos([FromQuery] int? especialidadeId)
+        public async Task<IActionResult> ListarMedicos([FromQuery] BuscaMedicoModelRequest request)
         {
-            var result = await _usuarioApplicationService.ListarMedicos(especialidadeId);
-            return result.Any() ? Ok(result) : NotFound();
+            var result = await _usuarioApplicationService.ListarMedicos(request);
+            return result.Any() ? Ok(result) : NotFound(new { message = "Nenhum médico encontrado" });
         }
 
         /// <summary>
@@ -74,6 +76,7 @@ namespace FIAP_HealthMed.API.Controllers
         {
             var result = await _usuarioApplicationService.ObterPorId(id);
             return result is null ? NotFound() : Ok(result);
-        }       
+        }
+
     }
 }

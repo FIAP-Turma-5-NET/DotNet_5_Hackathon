@@ -6,6 +6,8 @@ using FIAP_HealthMed.Domain.Entity;
 using FIAP_HealthMed.Domain.Enums;
 using FIAP_HealthMed.Domain.Interface.Repository;
 using FIAP_HealthMed.Domain.Interface.Services;
+using FIAP_HealthMed.Application.Enums;
+using FIAP_HealthMed.Application.Model.Auth;
 
 
 namespace FIAP_HealthMed.Application.Service
@@ -62,18 +64,52 @@ namespace FIAP_HealthMed.Application.Service
             return "Especialidade vinculada com sucesso!";
         }
 
-        public async Task<IEnumerable<UsuarioModelResponse>> ListarMedicos(int? especialidadeId = null)
-        {
-            var result = await _usuarioDomainService.ListarMedicosAsync(especialidadeId);
-
-            return _mapper.Map<IEnumerable<UsuarioModelResponse>>(result);
-        }
-
         public async Task<UsuarioModelResponse> ObterPorId(int id)
         {
             var user = await _usuarioDomainService.ObterPorIdAsync(id);
 
             return _mapper.Map<UsuarioModelResponse>(user);
-        }     
+        }
+
+        public async Task<IEnumerable<UsuarioModelResponse>> ListarMedicos(BuscaMedicoModelRequest request)
+        {
+            var result = await _usuarioDomainService.ListarMedicosAsync(
+                request.EspecialidadeId,
+                request.Nome,
+                request.CRM
+            );
+
+            return _mapper.Map<IEnumerable<UsuarioModelResponse>>(result);
+        }
+
+        private TipoLogin ObterTipoLogin(string login)
+        {
+            if (LoginEmail(login))
+                return TipoLogin.Email;
+            else if (LoginCpf(login))
+                return TipoLogin.CPF;
+            else
+                return TipoLogin.CRM;
+        }
+
+        private bool LoginEmail(string email)
+        {
+            try
+            {
+                var objEmail = new System.Net.Mail.MailAddress(email);
+                return objEmail.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool LoginCpf(string cpf)
+        {
+            cpf = new string(cpf.Where(char.IsDigit).ToArray());
+            return cpf.Length == 11;
+        }
+
     }
 }

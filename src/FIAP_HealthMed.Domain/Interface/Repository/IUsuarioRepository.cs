@@ -15,7 +15,7 @@ namespace FIAP_HealthMed.Domain.Interface.Repository
         Task<Usuario?> ObterPorEmailAsync(string login);
         Task<Usuario?> ObterPorCrmAsync(string login);
         Task<bool> VerificarExistentePorCpfOuEmailAsync(string cpf, string email);
-        Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null);
+        Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null, string? nome = null, string? crm = null);
         Task InserirEspecialidadesUsuarioAsync(int usuarioId, IEnumerable<int> especialidadeIds);     
     }
 }

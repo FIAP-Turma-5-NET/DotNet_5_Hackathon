@@ -33,9 +33,9 @@ namespace FIAP_HealthMed.Domain.Service
             return await _usuarioRepository.VerificarExistentePorCpfOuEmailAsync(cpf, email);
         }
 
-        public async Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null)
+        public async Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null, string? nome = null, string? crm = null)
         {
-            return await _usuarioRepository.ListarMedicosAsync(especialidadeId);
+            return await _usuarioRepository.ListarMedicosAsync(especialidadeId, nome, crm);
         }
 
         public async Task InserirEspecialidadesUsuarioAsync(int usuarioId, IEnumerable<int> especialidadeIds)
@@ -46,6 +46,11 @@ namespace FIAP_HealthMed.Domain.Service
         public bool VerificarLogin(Usuario usuario, string senha)
         {
             return PasswordHasher.VerifyPassword(senha, usuario.SenhaHash);
+        }
+
+        public Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

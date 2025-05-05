@@ -17,8 +17,10 @@ namespace FIAP_HealthMed.Domain.Entity
 
         public int MedicoId { get; set; }
         public Usuario Medico { get; set; }
+        public string? MedicoNome { get; set; }
 
         public int PacienteId { get; set; }
         public Usuario Paciente { get; set; }
+        public string? PacienteNome { get; set; }
     }
 }

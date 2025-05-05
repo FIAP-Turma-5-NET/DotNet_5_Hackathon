@@ -50,7 +50,13 @@ namespace FIAP_HealthMed.Data.Repository
             var parametros = new DynamicParameters();
             parametros.Add("@Id", id);
 
-            var sql = "SELECT * FROM Consulta WHERE Id = @Id AND Deleted_at IS NULL";
+            var sql = @"SELECT c.*, 
+                        m.Nome as MedicoNome,
+                        p.Nome as PacienteNome
+                        FROM Consulta c
+                        LEFT JOIN Usuario m ON m.Id = c.MedicoId
+                        LEFT JOIN Usuario p ON p.Id = c.PacienteId
+                        WHERE c.Id = @Id AND c.Deleted_at IS NULL";
 
             return await context.QueryFirstOrDefaultAsync<Consulta>(sql, parametros);
         }
@@ -61,8 +67,20 @@ namespace FIAP_HealthMed.Data.Repository
             parametros.Add("@Id", usuarioId);
 
             var sql = role == Role.Medico
-                ? "SELECT * FROM Consulta WHERE MedicoId = @Id AND Deleted_at IS NULL"
-                : "SELECT * FROM Consulta WHERE PacienteId = @Id AND Deleted_at IS NULL";
+                ? @"SELECT c.*, 
+                    m.Nome as MedicoNome,
+                    p.Nome as PacienteNome
+                    FROM Consulta c
+                    LEFT JOIN Usuario m ON m.Id = c.MedicoId
+                    LEFT JOIN Usuario p ON p.Id = c.PacienteId
+                    WHERE c.MedicoId = @Id AND c.Deleted_at IS NULL"
+                : @"SELECT c.*, 
+                    m.Nome as MedicoNome,
+                    p.Nome as PacienteNome
+                    FROM Consulta c
+                    LEFT JOIN Usuario m ON m.Id = c.MedicoId
+                    LEFT JOIN Usuario p ON p.Id = c.PacienteId
+                    WHERE c.PacienteId = @Id AND c.Deleted_at IS NULL";
 
             return await context.QueryAsync<Consulta>(sql, parametros);
         }

@@ -60,7 +60,7 @@ namespace FIAP_HealthMed.API.Controllers
         [HttpGet("medicos")]
         public async Task<IActionResult> ListarMedicos([FromQuery] BuscaMedicoModelRequest request)
         {
-            var result = await _usuarioApplicationService.BuscarMedicos(request);
+            var result = await _usuarioApplicationService.ListarMedicos(request);
             return result.Any() ? Ok(result) : NotFound(new { message = "Nenhum médico encontrado" });
         }
 

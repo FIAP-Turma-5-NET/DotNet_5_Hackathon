@@ -10,6 +10,8 @@ namespace FIAP_HealthMed.Application.Model.Consulta
         public StatusConsulta Status { get; set; }
         public string? JustificativaCancelamento { get; set; }
         public int MedicoId { get; set; }
+        public string? NomeMedico { get; set; }
         public int PacienteId { get; set; }
+        public string? NomePaciente { get; set; }
     }
 }

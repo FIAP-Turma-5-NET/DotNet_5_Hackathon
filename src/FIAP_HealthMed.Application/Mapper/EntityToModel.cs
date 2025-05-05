@@ -16,7 +16,9 @@ namespace FIAP_HealthMed.Application.Mapper
 
             CreateMap<Especialidade, EspecialidadeModelResponse>();
 
-            CreateMap<Consulta, ConsultaModelResponse>();
+            CreateMap<Consulta, ConsultaModelResponse>()
+                .ForMember(dest => dest.NomeMedico, opt => opt.MapFrom(src => src.MedicoNome))
+                .ForMember(dest => dest.NomePaciente, opt => opt.MapFrom(src => src.PacienteNome));
 
             CreateMap<HorarioDisponivel, HorarioDisponivelModelResponse>();
         }

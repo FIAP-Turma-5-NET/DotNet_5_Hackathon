@@ -18,7 +18,7 @@ namespace FIAP_HealthMed.Application.Strategies
 
         public Task<Usuario?> ObterUsuarioAsync(string login)
         {
-            return _repository.ObterPorCpfOuEmailAsync(login);
+            return _repository.ObterPorCpfAsync(login);
         }
     }
 }

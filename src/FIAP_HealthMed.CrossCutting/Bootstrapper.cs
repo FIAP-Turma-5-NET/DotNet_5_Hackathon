@@ -43,6 +43,8 @@ namespace FIAP_HealthMed.CrossCutting
             services.AddScoped<ILoginStrategy, LoginCpfStrategy>();
             services.AddScoped<ILoginStrategy, LoginCrmStrategy>();
             services.AddScoped<ILoginStrategyResolver, LoginStrategyResolver>();
+            services.AddScoped<IAuthApplicationService, AuthApplicationService>();
+            services.AddSingleton<ITokenService, TokenService>();
 
 
             //services.AddScoped<IUsuarioApplicationService, UsuarioApplicationService>();

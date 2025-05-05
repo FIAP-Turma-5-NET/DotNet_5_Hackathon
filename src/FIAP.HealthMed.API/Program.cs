@@ -1,13 +1,48 @@
 using System.Data;
+using System.Text;
 
 using FIAP_HealthMed.CrossCutting;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 using MySqlConnector;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region JWT
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
+
+var secretJwt = configuration.GetValue<string>("SecretJWT");
+if (string.IsNullOrEmpty(secretJwt))
+{
+    throw new InvalidOperationException("A chave 'SecretJWT' não foi encontrada ou está vazia no arquivo de configuração.");
+}
+
+var key = Encoding.ASCII.GetBytes(secretJwt);
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(x =>
+{
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = true;
+    x.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+#endregion
 
 // Add services to the container.
 
@@ -27,13 +62,15 @@ builder.Services.AddSwaggerGen(c =>
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n
-                      Enter 'Bearer' [space] and then your token in the text input below.
-                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+        Description =
+            "JWT Authorization Header - utilizado com Bearer Authentication.\r\n\r\n" +
+            "Digite 'Bearer' [espaço] e então seu token no campo abaixo.\r\n\r\n" +
+            "Exemplo (informar sem as aspas): 'Bearer 12345abcdef'",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement()

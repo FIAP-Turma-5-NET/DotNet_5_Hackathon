@@ -36,9 +36,20 @@ namespace FIAP_HealthMed.Data.Repository
             return await context.QueryFirstOrDefaultAsync<Usuario>(sql, new { Id = id });
         }
 
-        public async Task<Usuario?> ObterPorCpfOuEmailAsync(string login)
+        public async Task<Usuario?> ObterPorCpfAsync(string login)
         {
-            var sql = "SELECT * FROM Usuario WHERE (CPF = @Login OR Email = @Login) AND Deleted_at IS NULL";
+            var sql = "SELECT * FROM Usuario WHERE CPF = @Login AND Deleted_at IS NULL";
+            return await context.QueryFirstOrDefaultAsync<Usuario>(sql, new { Login = login });
+        }
+        public async Task<Usuario?> ObterPorEmailAsync(string login)
+        {
+            var sql = "SELECT * FROM Usuario WHERE Email = @Login AND Deleted_at IS NULL";
+            return await context.QueryFirstOrDefaultAsync<Usuario>(sql, new { Login = login });
+        }
+        
+        public async Task<Usuario?> ObterPorCrmAsync(string login)
+        {
+            var sql = "SELECT * FROM Usuario WHERE CRM = @Login AND Deleted_at IS NULL";
             return await context.QueryFirstOrDefaultAsync<Usuario>(sql, new { Login = login });
         }
 

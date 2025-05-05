@@ -1,6 +1,4 @@
-﻿using BCrypt.Net;
-
-namespace FIAP_HealthMed.Application.Helpers
+﻿namespace FIAP_HealthMed.Domain.Helpers
 {
     public class PasswordHasher
     {

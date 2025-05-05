@@ -1,6 +1,9 @@
 using System.Data;
+
 using FIAP_HealthMed.CrossCutting;
+
 using Microsoft.OpenApi.Models;
+
 using MySqlConnector;
 
 
@@ -11,7 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 #region SWAGGER
 builder.Services.AddSwaggerGen(c =>
@@ -30,7 +32,7 @@ builder.Services.AddSwaggerGen(c =>
                       \r\n\r\nExample: 'Bearer 12345abcdef'",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey, 
+        Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
 
@@ -42,14 +44,14 @@ builder.Services.AddSwaggerGen(c =>
                   Reference = new OpenApiReference
                   {
                       Type = ReferenceType.SecurityScheme,
-                      Id = "Bearer" 
+                      Id = "Bearer"
                   },
                   Scheme = "oauth2",
                   Name = "Bearer",
                   In = ParameterLocation.Header,
 
               },
-              new List<string>() 
+              new List<string>()
           }
       });
 });
@@ -63,15 +65,11 @@ builder.Services.AddScoped<IDbConnection>((connection) => new MySqlConnection(co
 builder.Services.AddRegisterCommonServices();
 builder.Services.AddRegisterServices();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }

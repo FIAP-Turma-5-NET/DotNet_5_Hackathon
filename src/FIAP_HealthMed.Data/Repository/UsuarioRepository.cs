@@ -47,8 +47,8 @@ namespace FIAP_HealthMed.Data.Repository
             var sql = "SELECT COUNT(1) FROM Usuario WHERE (CPF = @Cpf OR Email = @Email) AND Deleted_at IS NULL";
             var result = await context.ExecuteScalarAsync<int>(sql, new { Cpf = cpf, Email = email });
             return result > 0;
-        }
-
+        }        
+        
         public async Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null)
         {
             var sql = @"

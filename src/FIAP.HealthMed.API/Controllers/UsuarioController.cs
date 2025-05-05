@@ -1,5 +1,8 @@
 ﻿using FIAP_HealthMed.Application.Interface;
+using FIAP_HealthMed.Application.Model.Auth;
 using FIAP_HealthMed.Application.Model.Usuario;
+using FIAP_HealthMed.Domain.Entity;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace FIAP_HealthMed.API.Controllers
@@ -30,6 +33,26 @@ namespace FIAP_HealthMed.API.Controllers
             {
                 var result = await _usuarioApplicationService.CadastrarAsync(request);
                 return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Efetuar login do usuário
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>Usuario cadastrado com sucesso</returns>
+        /// <response code="200">Sucesso</response>
+        /// <response code="404">Erro ao cadastrar usuário</response>
+        [HttpPost("login")]
+        public async Task<IActionResult> EfetuarLogin([FromBody] AuthLoginModelRequest request)
+        {
+            try
+            {                
+                return Ok(await _usuarioApplicationService.EfetuarLoginAsync(request));
             }
             catch (InvalidOperationException ex)
             {
@@ -72,6 +95,6 @@ namespace FIAP_HealthMed.API.Controllers
         {
             var result = await _usuarioApplicationService.ObterPorId(id);
             return result is null ? NotFound() : Ok(result);
-        }
+        }       
     }
 }

@@ -1,5 +1,7 @@
 ﻿using FIAP_HealthMed.Domain.Entity;
+using FIAP_HealthMed.Domain.Helpers;
 using FIAP_HealthMed.Domain.Interface.Repository;
+
 
 namespace FIAP_HealthMed.Domain.Service
 {
@@ -41,6 +43,9 @@ namespace FIAP_HealthMed.Domain.Service
             await _usuarioRepository.InserirEspecialidadesUsuarioAsync(usuarioId, especialidadeIds);
         }
 
-   
+        public bool VerificarLogin(Usuario usuario, string senha)
+        {
+            return PasswordHasher.VerifyPassword(senha, usuario.SenhaHash);
+        }
     }
 }

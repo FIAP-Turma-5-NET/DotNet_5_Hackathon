@@ -25,6 +25,7 @@ namespace FIAP_HealthMed.Domain.Entity
             DDD = telefoneSemMascara.Substring(0, 2);
             Telefone = telefoneSemMascara.Substring(2);
         }
+       
 
     }
 }

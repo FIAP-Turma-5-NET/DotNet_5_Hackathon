@@ -1,6 +1,8 @@
 ﻿using FIAP_HealthMed.Application.Interface;
+using FIAP_HealthMed.Application.Interfaces;
 using FIAP_HealthMed.Application.Mapper;
 using FIAP_HealthMed.Application.Service;
+using FIAP_HealthMed.Application.Strategies;
 using FIAP_HealthMed.Data.Repository;
 using FIAP_HealthMed.Domain.Interface.Repository;
 using FIAP_HealthMed.Domain.Interface.Services;
@@ -36,12 +38,17 @@ namespace FIAP_HealthMed.CrossCutting
 
             services.AddScoped<IEspecialidadeDomainService, EspecialidadeDomainService>();
             services.AddScoped<IEspecialidadeApplicationService, EspecialidadeApplicationService>();
-           
-            
+
+            services.AddScoped<ILoginStrategy, LoginEmailStrategy>();
+            services.AddScoped<ILoginStrategy, LoginCpfStrategy>();
+            services.AddScoped<ILoginStrategy, LoginCrmStrategy>();
+            services.AddScoped<ILoginStrategyResolver, LoginStrategyResolver>();
+
+
             //services.AddScoped<IUsuarioApplicationService, UsuarioApplicationService>();
-           
-            
-            
+
+
+
             //services.AddScoped<IProducerService, ProducerService>();
             //services.AddScoped<IContatoProducer, ContatoProducer>();
 

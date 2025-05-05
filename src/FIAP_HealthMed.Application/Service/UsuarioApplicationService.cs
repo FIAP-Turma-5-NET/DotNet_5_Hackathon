@@ -96,6 +96,17 @@ namespace FIAP_HealthMed.Application.Service
             return _mapper.Map<UsuarioModelResponse>(user);
         }
 
+        public async Task<IEnumerable<UsuarioModelResponse>> BuscarMedicos(BuscaMedicoModelRequest request)
+        {
+            var result = await _usuarioDomainService.ListarMedicosAsync(
+                request.EspecialidadeId,
+                request.Nome,
+                request.CRM
+            );
+
+            return _mapper.Map<IEnumerable<UsuarioModelResponse>>(result);
+        }
+
         private TipoLogin ObterTipoLogin(string login)
         {
             if (LoginEmail(login))

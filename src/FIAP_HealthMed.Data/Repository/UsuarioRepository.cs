@@ -49,25 +49,49 @@ namespace FIAP_HealthMed.Data.Repository
             return result > 0;
         }        
         
-        public async Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null)
+        public async Task<IEnumerable<Usuario>> ListarMedicosAsync(int? especialidadeId = null, string? nome = null, string? crm = null)
         {
             var sql = @"
-                        SELECT
-                            u.*,
-                            e.Id AS EspecialidadeId,
-                            e.Nome AS EspecialidadeNome,
-                            e.Created_at,
-                            e.Updated_at,
-                            e.Deleted_at
-                        FROM Usuario u
-                        LEFT JOIN Usuario_Especialidade ue ON ue.UsuarioId = u.Id
-                        LEFT JOIN Especialidade e ON e.Id = ue.EspecialidadeId
-                        WHERE u.Role = @role
-                        AND u.Ativo = 1
-                        AND u.Deleted_at IS NULL";
+                SELECT DISTINCT
+                    u.Id,
+                    u.Nome,
+                    u.CPF,
+                    u.DDD,
+                    u.Telefone,
+                    u.Email,
+                    u.SenhaHash,
+                    u.Role,
+                    u.CRM,
+                    u.Ativo,
+                    e.Id AS Id,
+                    e.Nome AS Nome
+                FROM Usuario u
+                LEFT JOIN Usuario_Especialidade ue ON ue.UsuarioId = u.Id
+                LEFT JOIN Especialidade e ON e.Id = ue.EspecialidadeId
+                WHERE u.Role = @role
+                AND u.Ativo = 1
+                AND u.Deleted_at IS NULL";
+
+            var parametros = new DynamicParameters();
+            parametros.Add("@role", Role.Medico);
 
             if (especialidadeId.HasValue)
+            {
                 sql += " AND ue.EspecialidadeId = @especialidadeId";
+                parametros.Add("@especialidadeId", especialidadeId.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(nome))
+            {
+                sql += " AND u.Nome LIKE @nome";
+                parametros.Add("@nome", $"%{nome}%");
+            }
+
+            if (!string.IsNullOrWhiteSpace(crm))
+            {
+                sql += " AND u.CRM = @crm";
+                parametros.Add("@crm", crm);
+            }
 
             var dict = new Dictionary<int, Usuario>();
 
@@ -87,8 +111,8 @@ namespace FIAP_HealthMed.Data.Repository
                     }
                     return uEntry;
                 },
-                new { role = Role.Medico, especialidadeId },
-                splitOn: "EspecialidadeId"
+                parametros,
+                splitOn: "Id"
             );
 
             return dict.Values;

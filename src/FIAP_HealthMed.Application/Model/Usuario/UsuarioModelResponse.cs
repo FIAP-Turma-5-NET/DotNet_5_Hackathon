@@ -1,4 +1,5 @@
 ﻿using FIAP_HealthMed.Domain.Enums;
+using FIAP_HealthMed.Application.Model.Especialidade;
 
 namespace FIAP_HealthMed.Application.Model.Usuario
 {
@@ -14,6 +15,6 @@ namespace FIAP_HealthMed.Application.Model.Usuario
         public bool Ativo { get; set; }
 
         public string? CRM { get; set; }
-        public List<string?> Especialidades { get; set; } = new();
+        public List<EspecialidadeModelResponse> Especialidades { get; set; } = new();
     }
 }

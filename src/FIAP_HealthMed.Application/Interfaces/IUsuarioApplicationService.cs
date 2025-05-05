@@ -1,5 +1,4 @@
-﻿using FIAP_HealthMed.Application.Model.Auth;
-using FIAP_HealthMed.Application.Model.Usuario;
+﻿using FIAP_HealthMed.Application.Model.Usuario;
 
 namespace FIAP_HealthMed.Application.Interface
 {
@@ -7,8 +6,7 @@ namespace FIAP_HealthMed.Application.Interface
     {
         Task<string> CadastrarAsync(UsuarioModelRequest request);
         Task<IEnumerable<UsuarioModelResponse>> ListarMedicos(int? especialidadeId = null);
-        Task<UsuarioModelResponse> ObterPorId(int id);
-        Task<bool> EfetuarLoginAsync(AuthLoginModelRequest request);
+        Task<UsuarioModelResponse> ObterPorId(int id);        
         Task<string> InserirEspecialidadesUsuarioAsync(int usuarioId, IEnumerable<int> especialidadeIds);
     }
 }

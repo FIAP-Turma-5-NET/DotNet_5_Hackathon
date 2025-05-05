@@ -40,27 +40,6 @@ namespace FIAP_HealthMed.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Efetuar login do usuário
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns>Usuario cadastrado com sucesso</returns>
-        /// <response code="200">Sucesso</response>
-        /// <response code="404">Erro ao cadastrar usuário</response>
-        [HttpPost("login")]
-        public async Task<IActionResult> EfetuarLogin([FromBody] AuthLoginModelRequest request)
-        {
-            try
-            {                
-                return Ok(await _usuarioApplicationService.EfetuarLoginAsync(request));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-
-
         [HttpPost("{usuarioId}/especialidades")]
         public async Task<IActionResult> AdicionarEspecialidades(int usuarioId,[FromBody] UsuarioEspecialidadeModelRequest request)
         {

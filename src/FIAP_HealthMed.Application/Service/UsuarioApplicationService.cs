@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
-
-using FIAP_HealthMed.Application.Enums;
 using FIAP_HealthMed.Domain.Helpers;
 using FIAP_HealthMed.Application.Interface;
-using FIAP_HealthMed.Application.Interfaces;
-using FIAP_HealthMed.Application.Model.Auth;
 using FIAP_HealthMed.Application.Model.Usuario;
 using FIAP_HealthMed.Domain.Entity;
 using FIAP_HealthMed.Domain.Enums;
@@ -19,18 +15,16 @@ namespace FIAP_HealthMed.Application.Service
 
         private readonly IUsuarioDomainService _usuarioDomainService;
         private readonly IEspecialidadeDomainService _especialidadeDomainService;
-        private readonly IMapper _mapper;
-        private readonly ILoginStrategyResolver _loginStrategyResolver;
+        private readonly IMapper _mapper;    
 
         public UsuarioApplicationService(IUsuarioDomainService usuarioDomainService, 
             IEspecialidadeDomainService especialidadeDomainService, 
-            IMapper mapper,
-            ILoginStrategyResolver loginStrategyResolver)
+            IMapper mapper        
+            )
         {
             _usuarioDomainService = usuarioDomainService;
             _especialidadeDomainService = especialidadeDomainService;
-            _mapper = mapper;
-            _loginStrategyResolver = loginStrategyResolver;
+            _mapper = mapper;           
         } 
 
         public async Task<string> CadastrarAsync(UsuarioModelRequest request)
@@ -68,20 +62,6 @@ namespace FIAP_HealthMed.Application.Service
             return "Especialidade vinculada com sucesso!";
         }
 
-        public async Task<bool> EfetuarLoginAsync(AuthLoginModelRequest request)
-        {
-            var tipoLogin = ObterTipoLogin(request.Login);
-
-            var strategy = _loginStrategyResolver.Resolver(tipoLogin);
-
-            var usuario = await strategy.ObterUsuarioAsync(request.Login);
-
-            if (usuario == null) 
-                throw new InvalidOperationException("Usuário não encontrado!");
-
-            return _usuarioDomainService.VerificarLogin(usuario, request.Senha);
-        }
-
         public async Task<IEnumerable<UsuarioModelResponse>> ListarMedicos(int? especialidadeId = null)
         {
             var result = await _usuarioDomainService.ListarMedicosAsync(especialidadeId);
@@ -94,35 +74,6 @@ namespace FIAP_HealthMed.Application.Service
             var user = await _usuarioDomainService.ObterPorIdAsync(id);
 
             return _mapper.Map<UsuarioModelResponse>(user);
-        }
-
-        private TipoLogin ObterTipoLogin(string login)
-        {
-            if (LoginEmail(login))
-                return TipoLogin.Email;
-            else if (LoginCpf(login))
-                return TipoLogin.CPF;
-            else
-                return TipoLogin.CRM;
-        }
-
-        private bool LoginEmail(string email)
-        {
-            try
-            {
-                var objEmail = new System.Net.Mail.MailAddress(email);
-                return objEmail.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private bool LoginCpf(string cpf)
-        {
-            cpf = new string(cpf.Where(char.IsDigit).ToArray());
-            return cpf.Length == 11;
-        }
+        }     
     }
 }

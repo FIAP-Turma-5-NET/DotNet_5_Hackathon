@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -22,6 +21,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.Data", "src\FIAP_HealthMed.Data\FIAP_HealthMed.Data.csproj", "{2AE128D4-F760-4354-A7B6-E3E7B714EB68}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP_HealthMed.CrossCutting", "src\FIAP_HealthMed.CrossCutting\FIAP_HealthMed.CrossCutting.csproj", "{D278994E-990B-4CBE-9A83-C88A58991B11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAP.HealthMed.Tests", "tests\FIAP.HealthMed.Tests\FIAP.HealthMed.Tests.csproj", "{E278994E-990B-4CBE-9A83-C88A58991B12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +50,10 @@ Global
 		{D278994E-990B-4CBE-9A83-C88A58991B11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D278994E-990B-4CBE-9A83-C88A58991B11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D278994E-990B-4CBE-9A83-C88A58991B11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E278994E-990B-4CBE-9A83-C88A58991B12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E278994E-990B-4CBE-9A83-C88A58991B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E278994E-990B-4CBE-9A83-C88A58991B12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E278994E-990B-4CBE-9A83-C88A58991B12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,5 +64,6 @@ Global
 		{0CF4E26D-6122-424E-8F96-3575D8EF3D12} = {D9D7B739-A1DE-456F-B6A1-B226FB6AFA84}
 		{2AE128D4-F760-4354-A7B6-E3E7B714EB68} = {BF11C6BC-E7B1-41A0-A858-11A4F1007872}
 		{D278994E-990B-4CBE-9A83-C88A58991B11} = {BF11C6BC-E7B1-41A0-A858-11A4F1007872}
+		{E278994E-990B-4CBE-9A83-C88A58991B12} = {389BBFBD-48E2-4E7B-AD95-EA1306141AD3}
 	EndGlobalSection
 EndGlobal

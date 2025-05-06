@@ -1,43 +1,67 @@
+# Nome do workflow que aparecerá no GitHub Actions
 name: CI/CD Pipeline
 
+# Define quando o workflow será executado
 on:
+  # Executa quando houver push na branch main
   push:
     branches: [ main ]
+  # Executa quando houver pull request para a branch main
   pull_request:
     branches: [ main ]
 
+# Variáveis de ambiente que serão usadas em todo o workflow
 env:
   DOTNET_VERSION: '9.0.100'
   PROJECT_PATH: 'src/FIAP.HealthMed.API'
 
 jobs:
+  # Job de build e teste
   build-and-test:
+    # Define o sistema operacional que executará o job
     runs-on: ubuntu-latest
     
     steps:
+    # Mensagem de início do job
     - name: warning starting
       run: echo "Iniciando jobs!"
 
+    # Baixa o código do repositório
     - name: Check out the repository
       uses: actions/checkout@v4
     
+    # Configura o ambiente .NET com a versão especificada
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     
+    # Restaura os pacotes NuGet necessários
     - name: Restore dependencies
       run: dotnet restore
     
+    # Compila o projeto em modo Release
     - name: Build
       run: dotnet build --no-restore --configuration Release
     
+    # Executa os testes e gera relatório de cobertura
     - name: Test
-      run: dotnet test --no-build --verbosity normal --configuration Release
+      run: |
+        dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./coverage
     
+    # Faz upload do relatório de cobertura como artefato
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ./coverage
+        retention-days: 7
+    
+    # Publica a aplicação para deploy
     - name: Publish
       run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --output ./publish
     
+    # Faz upload dos arquivos publicados como artefato
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -45,17 +69,75 @@ jobs:
         path: ./publish
         retention-days: 7
 
+    # Mensagem de fim do job
     - name: warning finishing
       run: echo "Finalizando jobs!"
 
-  deploy:
+  # Job de análise de segurança
+  security-scan:
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     
     steps:
     - name: warning starting
-      run: echo "Iniciando deploy!"
+      run: echo "Iniciando análise de segurança!"
+
+    - name: Check out the repository
+      uses: actions/checkout@v4
+
+    # Análise de dependências vulneráveis
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions/dotnet@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+
+    # Análise de código com SonarCloud
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    - name: warning finishing
+      run: echo "Finalizando análise de segurança!"
+
+  # Job de deploy para staging
+  deploy-staging:
+    needs: [build-and-test, security-scan]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: staging
+    
+    steps:
+    - name: warning starting
+      run: echo "Iniciando deploy para staging!"
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: healthmed-api
+        path: ./publish
+    
+    - name: Deploy to staging
+      run: |
+        echo "Deploying to staging environment..."
+        # Adicione aqui os comandos de deploy para staging
+
+    - name: warning finishing
+      run: echo "Finalizando deploy para staging!"
+
+  # Job de deploy para produção
+  deploy-production:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: warning starting
+      run: echo "Iniciando deploy para produção!"
 
     - name: Download build artifacts
       uses: actions/download-artifact@v4
@@ -65,8 +147,8 @@ jobs:
     
     - name: Deploy to production
       run: |
-        echo "Deploying to production..."
-        # Adicione aqui os comandos de deploy específicos
+        echo "Deploying to production environment..."
+        # Adicione aqui os comandos de deploy para produção
 
     - name: warning finishing
-      run: echo "Finalizando deploy!"
+      run: echo "Finalizando deploy para produção!"

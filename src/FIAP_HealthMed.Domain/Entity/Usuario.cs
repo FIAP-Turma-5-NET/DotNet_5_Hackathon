@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
 using FIAP_HealthMed.Domain.Enums;
 
 namespace FIAP_HealthMed.Domain.Entity
@@ -12,6 +14,7 @@ namespace FIAP_HealthMed.Domain.Entity
         public required string Email { get; set; }
         public required string SenhaHash { get; set; }
 
+        [JsonPropertyName("tipoUsuario")]
         public required Role Role { get; set; }
 
         public bool Ativo { get; set; }

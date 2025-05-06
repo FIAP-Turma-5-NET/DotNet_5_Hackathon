@@ -1,7 +1,6 @@
 ﻿using FIAP_HealthMed.Application.Interface;
-using FIAP_HealthMed.Application.Model.Auth;
 using FIAP_HealthMed.Application.Model.Usuario;
-using FIAP_HealthMed.Domain.Entity;
+
 
 using Microsoft.AspNetCore.Mvc;
 

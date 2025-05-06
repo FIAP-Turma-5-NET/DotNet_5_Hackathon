@@ -28,12 +28,12 @@ namespace FIAP_HealthMed.Application.Service
             var usuario = await strategy.ObterUsuarioAsync(request.Login);
 
             if (usuario == null)
-                throw new UnauthorizedAccessException("Usuário não encontrado!");
+                throw new UnauthorizedAccessException("Login ou senha inválidos. Verifique suas credenciais e tente novamente.");
 
             var loginValido = _usuarioDomainService.VerificarLogin(usuario, request.Senha);
 
             if (!loginValido)
-                throw new UnauthorizedAccessException("Senha inválida!");
+                throw new UnauthorizedAccessException("Login ou senha inválidos. Verifique suas credenciais e tente novamente.");
 
             var token = _tokenService.GerarToken(usuario);
 

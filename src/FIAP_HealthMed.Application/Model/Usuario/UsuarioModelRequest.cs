@@ -10,7 +10,7 @@ namespace FIAP_HealthMed.Application.Model.Usuario
         public required string Senha { get; set; }
         public required string DDD { get; set; }
         public required string Telefone { get; set; }
-        public required Role Role { get; set; }
+        public required string TipoUsuario { get; set; }
         public bool Ativo { get; set; }
 
         // Médico

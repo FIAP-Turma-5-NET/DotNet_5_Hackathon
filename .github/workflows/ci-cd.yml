@@ -13,7 +13,7 @@ on:
 # Variáveis de ambiente que serão usadas em todo o workflow
 env:
   DOTNET_VERSION: '9.0.100'
-  PROJECT_PATH: 'src/FIAP.HealthMed.API'
+  PROJECT_PATH: 'src/FIAP.HealthMed.API/FIAP.HealthMed.API.csproj'
 
 jobs:
   # Job de build e teste
@@ -27,7 +27,7 @@ jobs:
       run: echo "Iniciando jobs!"
 
     # Baixa o código do repositório
-    - name: Check out the repository
+    - name: Checkout code
       uses: actions/checkout@v4
     
     # Configura o ambiente .NET com a versão especificada
@@ -46,8 +46,7 @@ jobs:
     
     # Executa os testes e gera relatório de cobertura
     - name: Test
-      run: |
-        dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./coverage
+      run: dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./coverage
     
     # Faz upload do relatório de cobertura como artefato
     - name: Upload coverage report
@@ -59,13 +58,13 @@ jobs:
     
     # Publica a aplicação para deploy
     - name: Publish
-      run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --output ./publish
+      run: dotnet publish --no-build --configuration Release --output ./publish
     
     # Faz upload dos arquivos publicados como artefato
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: healthmed-api
+        name: build-artifacts
         path: ./publish
         retention-days: 7
 
@@ -92,6 +91,7 @@ jobs:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         args: --severity-threshold=high
+        project-path: ${{ env.PROJECT_PATH }}
 
     # Análise de código com SonarCloud
     - name: SonarCloud Scan
@@ -117,7 +117,7 @@ jobs:
     - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: healthmed-api
+        name: build-artifacts
         path: ./publish
     
     - name: Deploy to staging
@@ -142,7 +142,7 @@ jobs:
     - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: healthmed-api
+        name: build-artifacts
         path: ./publish
     
     - name: Deploy to production

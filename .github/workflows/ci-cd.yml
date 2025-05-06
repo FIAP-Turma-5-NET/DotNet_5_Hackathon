@@ -96,6 +96,12 @@ jobs:
       with:
         version: latest
 
+    # Autentica o Snyk
+    - name: Authenticate Snyk
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
     # Análise de dependências vulneráveis
     - name: Run Snyk to check for vulnerabilities
       env:

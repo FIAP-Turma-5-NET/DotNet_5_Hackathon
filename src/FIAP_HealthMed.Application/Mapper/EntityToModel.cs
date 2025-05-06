@@ -9,7 +9,7 @@ namespace FIAP_HealthMed.Application.Mapper
 {
     public class EntityToModel : Profile
     {
-        public EntityToModel() 
+        public EntityToModel()
         {
             CreateMap<Usuario, UsuarioModelResponse>()
                 .ForMember(dest => dest.Especialidades, opt => opt.MapFrom(src => src.Especialidades));
@@ -17,8 +17,10 @@ namespace FIAP_HealthMed.Application.Mapper
             CreateMap<Especialidade, EspecialidadeModelResponse>();
 
             CreateMap<Consulta, ConsultaModelResponse>()
-                .ForMember(dest => dest.NomeMedico, opt => opt.MapFrom(src => src.MedicoNome))
-                .ForMember(dest => dest.NomePaciente, opt => opt.MapFrom(src => src.PacienteNome));
+              .ForMember(dest => dest.NomeMedico, opt => opt.MapFrom(src => src.MedicoNome))
+              .ForMember(dest => dest.NomePaciente, opt => opt.MapFrom(src => src.PacienteNome))
+              .ForMember(dest => dest.NomeEspecialidade, opt => opt.MapFrom(src => src.NomeEspecialidade));
+
 
             CreateMap<HorarioDisponivel, HorarioDisponivelModelResponse>();
         }

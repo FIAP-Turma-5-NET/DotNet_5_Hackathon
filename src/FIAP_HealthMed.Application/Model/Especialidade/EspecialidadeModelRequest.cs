@@ -3,5 +3,6 @@
     public record EspecialidadeModelRequest
     {
         public required string Nome { get; set; }
+        public decimal ValorConsulta { get; set; }
     }
 }

@@ -8,40 +8,42 @@ namespace FIAP_HealthMed.Domain.Service
     {
         private readonly IConsultaRepository _consultaRepository;
         private readonly IHorarioDisponivelRepository _horarioRepository;
+        private readonly IEspecialidadeRepository _especialidadeRepository;
 
-        public ConsultaDomainService(IConsultaRepository consultaRepository, IHorarioDisponivelRepository horarioRepository)
+        public ConsultaDomainService(
+            IConsultaRepository consultaRepository, 
+            IHorarioDisponivelRepository horarioRepository,
+            IEspecialidadeRepository especialidadeRepository)
         {
             _consultaRepository = consultaRepository;
             _horarioRepository = horarioRepository;
+            _especialidadeRepository = especialidadeRepository;
         }
 
         public async Task<string> AgendarConsultaAsync(Consulta consulta)
         {
-            var response = string.Empty;
-
+            
             var horarios = await _horarioRepository.ObterPorMedicoIdAsync(consulta.MedicoId);
-            var horarioDisponivel = horarios.FirstOrDefault(h => h.DataHora == consulta.DataHora && h.Ocupado == false);
+            var horario = horarios.FirstOrDefault(x => x.DataHora == consulta.DataHora && !x.Ocupado);
+            if (horario == null)
+                throw new InvalidOperationException("Horário indisponível.");
+          
+            var especialidade = await _especialidadeRepository.ObterPorIdAsync(consulta.EspecialidadeId);
+            if (especialidade == null)
+                throw new InvalidOperationException("Especialidade não encontrada.");
+          
+            consulta.ValorConsulta = especialidade.ValorConsulta;
+            consulta.DataHora = horario.DataHora;
+            consulta.MedicoId = horario.MedicoId;
+          
+            var id = await _consultaRepository.AgendarAsync(consulta);
+            if (id <= 0)
+                throw new InvalidOperationException("Erro ao agendar consulta.");
 
-            if (horarioDisponivel != null)
-            {
-                var result = await _consultaRepository.AgendarAsync(consulta);
-                if (result > 0)
-                {
-                    horarioDisponivel.Ocupado = true;
-                    await _horarioRepository.AtualizarHorarioAsync(horarioDisponivel.Id, horarioDisponivel.DataHora);
-                    response = "Consulta agendada com sucesso!";
-                }
-                else
-                {
-                    throw new InvalidOperationException("Erro ao agendar consulta.");
-                }
-            }
-            else
-            {
-                throw new InvalidOperationException("Horário indisponível para o médico.");
-            }
+            horario.Ocupado = true;
+            await _horarioRepository.AtualizarHorarioAsync(horario.Id, horario.DataHora);
 
-            return response;
+            return "Consulta agendada com sucesso!";
         }
 
         public async Task<string> CancelarConsultaAsync(int consultaId, int usuarioId, string justificativa)
@@ -112,8 +114,9 @@ namespace FIAP_HealthMed.Domain.Service
 
         public async Task<IEnumerable<Consulta>> ObterConsultasPorUsuarioAsync(int usuarioId, Role role)
         {
-            var consultas = await _consultaRepository.ObterPorUsuarioIdAsync(usuarioId, role);
-            return consultas;
+            return role == Role.Medico 
+                ? await _consultaRepository.ObterConsultasDoMedicoAsync(usuarioId)
+                : await _consultaRepository.ObterConsultasDoPacienteAsync(usuarioId);
         }
     }
 }

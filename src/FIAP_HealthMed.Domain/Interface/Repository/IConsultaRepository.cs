@@ -7,7 +7,8 @@ namespace FIAP_HealthMed.Domain.Interface.Repository
     {
         Task<int> AgendarAsync(Consulta consulta);
         Task<Consulta?> ObterPorIdAsync(int id);
-        Task<IEnumerable<Consulta>> ObterPorUsuarioIdAsync(int usuarioId, Role role);
+        Task<IEnumerable<Consulta>> ObterConsultasDoMedicoAsync(int medicoId);
+        Task<IEnumerable<Consulta>> ObterConsultasDoPacienteAsync(int pacienteId);
         Task<bool> AtualizarStatusAsync(int consultaId, StatusConsulta status, string? justificativa = null);
     }
 }

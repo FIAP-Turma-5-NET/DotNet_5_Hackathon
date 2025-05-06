@@ -11,11 +11,12 @@ namespace FIAP_HealthMed.Data.Repository
     {
         public async Task<int> CadastrarAsync(Especialidade especialidade)
         {
-            var sql = @"INSERT INTO Especialidade (Nome) VALUES (@Nome);
+            var sql = @"INSERT INTO Especialidade (Nome, ValorConsulta) VALUES (@Nome, @ValorConsulta);
                         SELECT LAST_INSERT_ID();";
 
             var parametros = new DynamicParameters();
             parametros.Add("@Nome", especialidade.Nome);
+            parametros.Add("@ValorConsulta", especialidade.ValorConsulta);
 
             return await context.ExecuteScalarAsync<int>(sql, parametros);
         }

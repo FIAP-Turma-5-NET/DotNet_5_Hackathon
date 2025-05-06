@@ -10,7 +10,7 @@ namespace FIAP_HealthMed.Domain.Entity
     public class Consulta : EntityBase
     {
         public required DateTime DataHora { get; set; }
-        public decimal Valor { get; set; }
+        public decimal ValorConsulta { get; set; }
 
         public StatusConsulta Status { get; set; } = StatusConsulta.Pendente;
         public string? JustificativaCancelamento { get; set; }
@@ -22,5 +22,8 @@ namespace FIAP_HealthMed.Domain.Entity
         public int PacienteId { get; set; }
         public Usuario Paciente { get; set; }
         public string? PacienteNome { get; set; }
+
+        public int EspecialidadeId { get; set; }
+        public string? NomeEspecialidade { get; set; } 
     }
 }

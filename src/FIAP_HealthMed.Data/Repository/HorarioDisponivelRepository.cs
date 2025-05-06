@@ -11,7 +11,7 @@ namespace FIAP_HealthMed.Data.Repository
     {
         public async Task<IEnumerable<HorarioDisponivel>> ObterPorMedicoIdAsync(int medicoId)
         {
-            var sql = "SELECT * FROM HorarioDisponivel WHERE MedicoId = @MedicoId AND Deleted_at IS NULL";
+            var sql = "SELECT * FROM HorarioDisponivel WHERE MedicoId = @MedicoId AND Ocupado = 0 AND Deleted_at IS NULL";
             return await context.QueryAsync<HorarioDisponivel>(sql, new { MedicoId = medicoId });
         }
 

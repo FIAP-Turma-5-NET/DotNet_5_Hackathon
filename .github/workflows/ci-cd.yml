@@ -92,9 +92,10 @@ jobs:
 
     # Análise de dependências vulneráveis
     - name: Run Snyk to check for vulnerabilities
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       run: |
-        cd src/FIAP.HealthMed.API
-        snyk test --severity-threshold=high --all-projects
+        snyk test --severity-threshold=high --file=${{ env.PROJECT_PATH }} --package-manager=nuget
 
     # Análise de código com SonarCloud
     - name: SonarCloud Scan

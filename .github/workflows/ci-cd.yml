@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  DOTNET_VERSION: '9.0.x'
+  DOTNET_VERSION: '9.0.100'
   PROJECT_PATH: 'src/FIAP.HealthMed.API'
 
 jobs:
@@ -15,7 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - name: warning starting
+      run: echo "Iniciando jobs!"
+
+    - name: Check out the repository
+      uses: actions/checkout@v4
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -41,21 +45,28 @@ jobs:
         path: ./publish
         retention-days: 7
 
+    - name: warning finishing
+      run: echo "Finalizando jobs!"
+
   deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     
     steps:
+    - name: warning starting
+      run: echo "Iniciando deploy!"
+
     - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
         name: healthmed-api
         path: ./publish
     
-    # Aqui você pode adicionar os passos de deploy específicos para seu ambiente
-    # Por exemplo, deploy para Azure, AWS, etc.
     - name: Deploy to production
       run: |
         echo "Deploying to production..."
-        # Adicione aqui os comandos de deploy específicos 
+        # Adicione aqui os comandos de deploy específicos
+
+    - name: warning finishing
+      run: echo "Finalizando deploy!"

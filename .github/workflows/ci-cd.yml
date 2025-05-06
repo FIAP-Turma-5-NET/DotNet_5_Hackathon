@@ -84,13 +84,17 @@ jobs:
     - name: Check out the repository
       uses: actions/checkout@v4
 
+    # Instala o Snyk CLI
+    - name: Install Snyk
+      uses: snyk/actions/setup@master
+      with:
+        version: latest
+
     # Análise de dependências vulneráveis
     - name: Run Snyk to check for vulnerabilities
-      uses: snyk/actions/dotnet@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        args: --severity-threshold=high --file=${{ env.PROJECT_PATH }}
+      run: |
+        cd src/FIAP.HealthMed.API
+        snyk test --severity-threshold=high --all-projects
 
     # Análise de código com SonarCloud
     - name: SonarCloud Scan

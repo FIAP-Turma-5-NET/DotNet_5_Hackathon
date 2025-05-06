@@ -95,7 +95,9 @@ jobs:
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       run: |
-        snyk test --severity-threshold=high --file=${{ env.PROJECT_PATH }} --package-manager=nuget
+        pwd
+        ls -la
+        snyk test --severity-threshold=high --file=./src/FIAP.HealthMed.API/FIAP.HealthMed.API.csproj --package-manager=nuget
 
     # Análise de código com SonarCloud
     - name: SonarCloud Scan

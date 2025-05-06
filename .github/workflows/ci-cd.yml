@@ -1,160 +1,164 @@
-# Nome do workflow que aparecerá no GitHub Actions
+# ╔══════════════════════════════════════════════════════════╗
+# ║  CI/CD Pipeline – FIAP HealthMed                         ║
+# ║  Build, Test, Security Scan, Deploy (staging & prod)     ║
+# ╚══════════════════════════════════════════════════════════╝
+
 name: CI/CD Pipeline
 
-# Define quando o workflow será executado
+# ───────────────────────────────────────────
+# Quando executar
+# ───────────────────────────────────────────
 on:
-  # Executa quando houver push na branch main
   push:
     branches: [ main ]
-  # Executa quando houver pull request para a branch main
   pull_request:
     branches: [ main ]
 
-# Variáveis de ambiente que serão usadas em todo o workflow
+# ───────────────────────────────────────────
+# Variáveis de ambiente globais
+# ───────────────────────────────────────────
 env:
-  DOTNET_VERSION: '9.0.100'
-  PROJECT_PATH: 'src/FIAP.HealthMed.API/FIAP.HealthMed.API.csproj'
+  DOTNET_VERSION: '8.0.x'                      # altere p/ '9.0.x' se precisar de preview
+  PROJECT_DIR: 'src/FIAP.HealthMed.API'        # pasta do projeto
+  PROJECT_FILE: 'FIAP.HealthMed.API.csproj'    # nome do csproj
 
+# ───────────────────────────────────────────
+# Job 1 – Build & Test
+# ───────────────────────────────────────────
 jobs:
-  # Job de build e teste
   build-and-test:
-    # Define o sistema operacional que executará o job
     runs-on: ubuntu-latest
-    
+
     steps:
-    # Mensagem de início do job
-    - name: warning starting
-      run: echo "Iniciando jobs!"
+      - name: Iniciando job
+        run: echo "🛠️  Build & Test iniciado!"
 
-    # Baixa o código do repositório
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    # Configura o ambiente .NET com a versão especificada
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-    
-    # Restaura os pacotes NuGet necessários
-    - name: Restore dependencies
-      run: dotnet restore
-    
-    # Compila o projeto em modo Release
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
-    
-    # Executa os testes e gera relatório de cobertura
-    - name: Test
-      run: dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./coverage
-    
-    # Faz upload do relatório de cobertura como artefato
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: ./coverage
-        retention-days: 7
-    
-    # Publica a aplicação para deploy
-    - name: Publish
-      run: dotnet publish --no-build --configuration Release --output ./publish
-    
-    # Faz upload dos arquivos publicados como artefato
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifacts
-        path: ./publish
-        retention-days: 7
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # Mensagem de fim do job
-    - name: warning finishing
-      run: echo "Finalizando jobs!"
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-  # Job de análise de segurança
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build (Release)
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test + Coverage
+        run: dotnet test --no-build --configuration Release \
+                         --collect:"XPlat Code Coverage" \
+                         --results-directory ./coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ./coverage
+          retention-days: 7
+
+      - name: Publish (Release)
+        run: dotnet publish --no-build --configuration Release \
+                             --output ./publish
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: ./publish
+          retention-days: 7
+
+      - name: Job finalizado
+        run: echo "✅ Build & Test concluído!"
+
+# ───────────────────────────────────────────
+# Job 2 – Security Scan (Snyk + SonarCloud)
+# ───────────────────────────────────────────
   security-scan:
     needs: build-and-test
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: warning starting
-      run: echo "Iniciando análise de segurança!"
+      - uses: actions/checkout@v4
 
-    - name: Check out the repository
-      uses: actions/checkout@v4
+      - name: Setup .NET (necessário p/ Snyk)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    # Instala o Snyk CLI
-    - name: Install Snyk
-      uses: snyk/actions/setup@master
-      with:
-        version: latest
+      - name: Install Snyk CLI
+        uses: snyk/actions/setup@master
+        with:
+          version: latest
 
-    # Análise de dependências vulneráveis
-    - name: Run Snyk to check for vulnerabilities
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      run: |
-        pwd
-        ls -la
-        snyk test --severity-threshold=high --file=./src/FIAP.HealthMed.API/FIAP.HealthMed.API.csproj --package-manager=nuget
+      - name: Snyk – dependency vulnerabilities
+        working-directory: ${{ env.PROJECT_DIR }}
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          snyk test --severity-threshold=high --file=${{ env.PROJECT_FILE }}
 
-    # Análise de código com SonarCloud
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN:  ${{ secrets.SONAR_TOKEN }}
 
-    - name: warning finishing
-      run: echo "Finalizando análise de segurança!"
+      - name: Security scan finalizado
+        run: echo "🔒 Análise de segurança concluída!"
 
-  # Job de deploy para staging
+# ───────────────────────────────────────────
+# Job 3 – Deploy Staging
+# ───────────────────────────────────────────
   deploy-staging:
     needs: [build-and-test, security-scan]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment: staging
-    
+
     steps:
-    - name: warning starting
-      run: echo "Iniciando deploy para staging!"
+      - name: Iniciando deploy para staging
+        run: echo "🚀 Deploy (staging) iniciado!"
 
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
-        path: ./publish
-    
-    - name: Deploy to staging
-      run: |
-        echo "Deploying to staging environment..."
-        # Adicione aqui os comandos de deploy para staging
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: ./publish
 
-    - name: warning finishing
-      run: echo "Finalizando deploy para staging!"
+      - name: Deploy to staging
+        run: |
+          echo "Aqui entram seus comandos de deploy (staging)…"
+          # ex.: az webapp deploy … OU docker compose up …
 
-  # Job de deploy para produção
+      - name: Deploy staging finalizado
+        run: echo "✅ Deploy (staging) concluído!"
+
+# ───────────────────────────────────────────
+# Job 4 – Deploy Production
+# ───────────────────────────────────────────
   deploy-production:
     needs: deploy-staging
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment: production
-    
+
     steps:
-    - name: warning starting
-      run: echo "Iniciando deploy para produção!"
+      - name: Iniciando deploy para produção
+        run: echo "🚀 Deploy (prod) iniciado!"
 
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
-        path: ./publish
-    
-    - name: Deploy to production
-      run: |
-        echo "Deploying to production environment..."
-        # Adicione aqui os comandos de deploy para produção
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: ./publish
 
-    - name: warning finishing
-      run: echo "Finalizando deploy para produção!"
+      - name: Deploy to production
+        run: |
+          echo "Aqui entram seus comandos de deploy (produção)…"
+          # ex.: kubectl apply -f k8s/ …
+
+      - name: Deploy produção finalizado
+        run: echo "🏁 Deploy (prod) concluído!"

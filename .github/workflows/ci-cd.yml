@@ -90,8 +90,7 @@ jobs:
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --severity-threshold=high
-        project-path: ${{ env.PROJECT_PATH }}
+        args: --severity-threshold=high --file=${{ env.PROJECT_PATH }}
 
     # Análise de código com SonarCloud
     - name: SonarCloud Scan

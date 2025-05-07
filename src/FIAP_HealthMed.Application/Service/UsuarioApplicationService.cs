@@ -7,8 +7,6 @@ using FIAP_HealthMed.Domain.Enums;
 using FIAP_HealthMed.Domain.Interface.Repository;
 using FIAP_HealthMed.Domain.Interface.Services;
 using FIAP_HealthMed.Application.Enums;
-using FIAP_HealthMed.Application.Model.Auth;
-
 
 namespace FIAP_HealthMed.Application.Service
 {

@@ -1,9 +1,10 @@
-﻿namespace FIAP_HealthMed.Domain.Enums
+﻿using System.ComponentModel;
+
+namespace FIAP_HealthMed.Domain.Enums
 {
     public enum Role
-    {
-        
-        Medico = 1,
+    {       
+        Medico = 1,     
         Paciente = 2
     }
 }

@@ -1,13 +1,19 @@
 using System.Data;
 using System.Text;
 
+using FIAP.HealthMed.API.Examples;
+
 using FIAP_HealthMed.CrossCutting;
+using FIAP_HealthMed.Domain.Enums;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 using MySqlConnector;
+
+using Swashbuckle.AspNetCore.Filters;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -60,6 +66,8 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API para gerenciamento de consultas médicas e usuários"
     });
 
+    c.ExampleFilters();
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description =
@@ -92,6 +100,8 @@ builder.Services.AddSwaggerGen(c =>
           }
       });
 });
+
+builder.Services.AddSwaggerExamplesFromAssemblyOf<UsuarioRequestExample>();
 #endregion
 
 //Configuração para buscar a connection

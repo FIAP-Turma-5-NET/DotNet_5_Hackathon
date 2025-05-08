@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FIAP_HealthMed.Producer.Interface;
+﻿using FIAP_HealthMed.Producer.Interface;
 using Shared.Model;
 
 namespace FIAP_HealthMed.Producer.Producer
@@ -20,7 +15,7 @@ namespace FIAP_HealthMed.Producer.Producer
         }
         public async Task EnviarUsuarioAsync(UsuarioMensagem mensagem)
         {
-            await _producerService.EnviaMensagemAsync(mensagem, $"{_queueName} - {mensagem.TipoEvento}");
+            await _producerService.EnviaMensagemAsync(mensagem, _queueName + "-" + mensagem.TipoEvento);
         }
     }
 }

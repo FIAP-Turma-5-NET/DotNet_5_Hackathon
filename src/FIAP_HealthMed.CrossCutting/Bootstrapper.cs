@@ -7,6 +7,9 @@ using FIAP_HealthMed.Data.Repository;
 using FIAP_HealthMed.Domain.Interface.Repository;
 using FIAP_HealthMed.Domain.Interface.Services;
 using FIAP_HealthMed.Domain.Service;
+using FIAP_HealthMed.Producer.Interface;
+using FIAP_HealthMed.Producer.Producer;
+using FIAP_HealthMed.Producer.Service;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FIAP_HealthMed.CrossCutting
@@ -45,6 +48,8 @@ namespace FIAP_HealthMed.CrossCutting
             services.AddScoped<ILoginStrategyResolver, LoginStrategyResolver>();
             services.AddScoped<IAuthApplicationService, AuthApplicationService>();
             services.AddSingleton<ITokenService, TokenService>();
+            services.AddScoped<IProducerService, ProducerService>();
+            services.AddScoped<IUsuarioProducer, UsuarioProducer>();
 
 
             //services.AddScoped<IUsuarioApplicationService, UsuarioApplicationService>();

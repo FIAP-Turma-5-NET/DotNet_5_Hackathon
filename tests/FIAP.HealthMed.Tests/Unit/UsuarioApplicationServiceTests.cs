@@ -6,7 +6,7 @@ using FIAP_HealthMed.Domain.Entity;
 using FIAP_HealthMed.Domain.Enums;
 using FIAP_HealthMed.Domain.Interface.Repository;
 using FIAP_HealthMed.Domain.Interface.Services;
-
+using FIAP_HealthMed.Producer.Interface;
 using Moq;
 
 namespace FIAP.HealthMed.Tests.Unit
@@ -15,6 +15,7 @@ namespace FIAP.HealthMed.Tests.Unit
     {
         private readonly Mock<IUsuarioDomainService> _usuarioDomainServiceMock;
         private readonly Mock<IEspecialidadeDomainService> _especialidadeDomainServiceMock;
+        private readonly Mock<IUsuarioProducer> _usuarioProducer;
         private readonly Mock<IMapper> _mapperMock;
         private readonly UsuarioApplicationService _service;
 
@@ -22,11 +23,13 @@ namespace FIAP.HealthMed.Tests.Unit
         {
             _usuarioDomainServiceMock = new Mock<IUsuarioDomainService>();
             _especialidadeDomainServiceMock = new Mock<IEspecialidadeDomainService>();
+            _usuarioProducer = new Mock<IUsuarioProducer>();
             _mapperMock = new Mock<IMapper>();
 
             _service = new UsuarioApplicationService(
                 _usuarioDomainServiceMock.Object,
                 _especialidadeDomainServiceMock.Object,
+                _usuarioProducer.Object,
                 _mapperMock.Object
             );
         }

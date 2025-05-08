@@ -1,19 +1,13 @@
 using System.Data;
 using System.Text;
-
 using FIAP.HealthMed.API.Examples;
-
 using FIAP_HealthMed.CrossCutting;
-using FIAP_HealthMed.Domain.Enums;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-
 using MySqlConnector;
-
 using Swashbuckle.AspNetCore.Filters;
+using MassTransit;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -103,6 +97,32 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddSwaggerExamplesFromAssemblyOf<UsuarioRequestExample>();
 #endregion
+
+
+
+
+//MassTransit - RabbitMQ
+var servidor = Environment.GetEnvironmentVariable("MassTransit_Servidor") ?? string.Empty;
+var usuario = Environment.GetEnvironmentVariable("MassTransit_Usuario") ?? string.Empty;
+var senha = Environment.GetEnvironmentVariable("MassTransit_Senha") ?? string.Empty;
+
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(servidor, "/", h =>
+        {
+            h.Username(usuario);
+            h.Password(senha);
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
+
+
+
+
 
 //Configuração para buscar a connection
 var connectionString = Environment.GetEnvironmentVariable("Connection_String");

@@ -3,26 +3,56 @@ version: '3.8'
 services:
   api:
     build:
-      context: .
+      context: ./
       dockerfile: Dockerfile
+    container_name: fiap_healthmed_api
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "7209:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=db;Database=HealthMedDb;User=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True
+      - Connection_String=Server=mysql;port=3306;database=HealthMed;uid=root;pwd=202406
+      - MassTransit_Servidor=host.docker.internal
+      - MassTransit_Usuario=guest
+      - MassTransit_Senha=guest
+      - MassTransit_Filas_UsuarioFila=usuario-queue
     depends_on:
-      - db
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - default
 
-  db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+  mysql:
+    image: mysql:8.0.32
+    container_name: mysql-fiap-HealthMed
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong!Passw0rd
+      MYSQL_ROOT_PASSWORD: 202406
     ports:
-      - "1433:1433"
+      - "3360:3306"
     volumes:
-      - sqldata:/var/opt/mssql
-
-volumes:
-  sqldata: 
+      - ./src/FIAP_HealthMed.Data/Scripts:/docker-entrypoint-initdb.d # Perguntar como ele executa isso. <---------------
+    restart: always
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  
+  rabbitmq:
+    image: masstransit/rabbitmq
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default

@@ -15,6 +15,8 @@
 	</ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\FIAP_HealthMed.Producer\FIAP_HealthMed.Producer.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.csproj" />
     <ProjectReference Include="..\FIAP_HealthMed.Domain\FIAP_HealthMed.Domain.csproj" />
   </ItemGroup>
 

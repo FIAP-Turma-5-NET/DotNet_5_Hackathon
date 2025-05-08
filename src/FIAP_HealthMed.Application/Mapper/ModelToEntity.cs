@@ -4,6 +4,7 @@ using FIAP_HealthMed.Application.Model.Especialidade;
 using FIAP_HealthMed.Application.Model.HorarioDisponivel;
 using FIAP_HealthMed.Application.Model.Usuario;
 using FIAP_HealthMed.Domain.Entity;
+using Shared.Model;
 
 namespace FIAP_HealthMed.Application.Mapper
 {
@@ -22,6 +23,12 @@ namespace FIAP_HealthMed.Application.Mapper
             CreateMap<EspecialidadeModelRequest, Especialidade>();
 
             CreateMap<HorarioDisponivelModelRequest, HorarioDisponivel>();
+
+            CreateMap<UsuarioMensagem, Usuario>().ForMember(x => x.Telefone, cd => cd.MapFrom(map => map.Telefone));
+
+            CreateMap<UsuarioModelRequest, UsuarioMensagem>();
+
+
 
         }
     }

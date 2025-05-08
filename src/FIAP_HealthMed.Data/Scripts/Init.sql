@@ -1,0 +1,74 @@
+CREATE DATABASE IF NOT EXISTS HealthMed;
+
+USE HealthMed;
+
+CREATE TABLE IF NOT EXISTS Especialidade (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `Nome` varchar(100) NOT NULL,
+  `Created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `Updated_at` datetime DEFAULT NULL,
+  `Deleted_at` datetime DEFAULT NULL,
+  `ValorConsulta` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS Usuario (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `Nome` varchar(150) NOT NULL,
+  `CPF` varchar(14) NOT NULL,
+  `DDD` varchar(2) NOT NULL,
+  `Telefone` varchar(15) NOT NULL,
+  `Email` varchar(100) NOT NULL,
+  `SenhaHash` varchar(255) NOT NULL,
+  `Role` int NOT NULL,
+  `CRM` varchar(20) DEFAULT NULL,
+  `Created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `Updated_at` datetime DEFAULT NULL,
+  `Deleted_at` datetime DEFAULT NULL,
+  `Ativo` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS Usuario_Especialidade (
+  `UsuarioId` int NOT NULL,
+  `EspecialidadeId` int NOT NULL,
+  `Created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`UsuarioId`,`EspecialidadeId`),
+  KEY `EspecialidadeId` (`EspecialidadeId`),
+  CONSTRAINT `Usuario_Especialidade_ibfk_1` FOREIGN KEY (`UsuarioId`) REFERENCES `Usuario` (`Id`),
+  CONSTRAINT `Usuario_Especialidade_ibfk_2` FOREIGN KEY (`EspecialidadeId`) REFERENCES `Especialidade` (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS HorarioDisponivel (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `DataHora` datetime NOT NULL,
+  `Ocupado` tinyint(1) NOT NULL DEFAULT '0',
+  `MedicoId` int NOT NULL,
+  `Created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `Updated_at` datetime DEFAULT NULL,
+  `Deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`Id`),
+  KEY `MedicoId` (`MedicoId`),
+  CONSTRAINT `HorarioDisponivel_ibfk_1` FOREIGN KEY (`MedicoId`) REFERENCES `Usuario` (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS Consulta (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `DataHora` datetime NOT NULL,
+  `Status` int NOT NULL DEFAULT '0',
+  `JustificativaCancelamento` text,
+  `MedicoId` int NOT NULL,
+  `PacienteId` int NOT NULL,
+  `EspecialidadeId` int NOT NULL,
+  `Created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `Updated_at` datetime DEFAULT NULL,
+  `Deleted_at` datetime DEFAULT NULL,
+  `ValorConsulta` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`Id`),
+  KEY `MedicoId` (`MedicoId`),
+  KEY `PacienteId` (`PacienteId`),
+  KEY `FK_Consulta_Especialidade` (`EspecialidadeId`),
+  CONSTRAINT `Consulta_ibfk_1` FOREIGN KEY (`MedicoId`) REFERENCES `Usuario` (`Id`),
+  CONSTRAINT `Consulta_ibfk_2` FOREIGN KEY (`PacienteId`) REFERENCES `Usuario` (`Id`),
+  CONSTRAINT `FK_Consulta_Especialidade` FOREIGN KEY (`EspecialidadeId`) REFERENCES `Especialidade` (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

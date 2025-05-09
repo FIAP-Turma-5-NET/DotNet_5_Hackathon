@@ -22,10 +22,10 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\FIAP_HealthMed.Application\FIAP_HealthMed.Application.csproj" />
-    <ProjectReference Include="..\..\src\FIAP_HealthMed.Domain\FIAP_HealthMed.Domain.csproj" />
-    <ProjectReference Include="..\..\src\FIAP_HealthMed.Data\FIAP_HealthMed.Data.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\FIAP_HealthMed.Application\FIAP_HealthMed.Application.csproj" />
+		<ProjectReference Include="..\..\FIAP_HealthMed.Domain\FIAP_HealthMed.Domain.csproj" />
+		<ProjectReference Include="..\..\FIAP_HealthMed.Data\FIAP_HealthMed.Data.csproj" />
+	</ItemGroup>
 
 </Project>

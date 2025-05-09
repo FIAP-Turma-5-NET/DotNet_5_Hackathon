@@ -60,7 +60,7 @@ namespace FIAP.HealthMed.Tests.Unit
                 DDD = request.DDD,
                 Telefone = request.Telefone,
                 TipoUsuario = request.TipoUsuario,
-                TipoEvento = "cadastro"
+                TipoEvento = "Cadastro"
             };
 
             _usuarioDomainServiceMock
@@ -156,6 +156,6 @@ namespace FIAP.HealthMed.Tests.Unit
 
             // Assert
             _usuarioDomainServiceMock.Verify(service => service.InserirEspecialidadesUsuarioAsync(usuarioId, especialidadeIds), Times.Once);
-        }       
+        }
     }
 }

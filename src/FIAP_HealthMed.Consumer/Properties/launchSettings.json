@@ -10,7 +10,8 @@
             "MassTransit_Servidor": "host.docker.internal",
             "MassTransit_Usuario": "guest",
             "MassTransit_Senha": "guest",
-            "MassTransit_Filas_UsuarioFila": "usuario-queue"
+            "MassTransit_Filas_UsuarioFila": "usuario-queue",
+            "MassTransit_Filas_ConsultaFila": "consulta-queue"
         }
     }
   }

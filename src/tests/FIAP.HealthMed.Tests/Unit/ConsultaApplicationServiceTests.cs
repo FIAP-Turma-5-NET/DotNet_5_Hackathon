@@ -5,7 +5,7 @@ using FIAP_HealthMed.Application.Service;
 using FIAP_HealthMed.Domain.Entity;
 using FIAP_HealthMed.Domain.Enums;
 using FIAP_HealthMed.Domain.Interface.Repository;
-
+using FIAP_HealthMed.Producer.Interface;
 using Moq;
 
 namespace FIAP.HealthMed.Tests.Unit
@@ -15,12 +15,13 @@ namespace FIAP.HealthMed.Tests.Unit
         private readonly Mock<IConsultaDomainService> _consultaDomainServiceMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly ConsultaApplicationService _service;
+        private readonly Mock<IConsultaProducer> _consultaProducerMock;
 
         public ConsultaApplicationServiceTests()
         {
             _consultaDomainServiceMock = new Mock<IConsultaDomainService>();
             _mapperMock = new Mock<IMapper>();
-            _service = new ConsultaApplicationService(_consultaDomainServiceMock.Object, _mapperMock.Object);
+            _service = new ConsultaApplicationService(_consultaDomainServiceMock.Object, _mapperMock.Object, _consultaProducerMock.Object);
         }
 
         [Fact]

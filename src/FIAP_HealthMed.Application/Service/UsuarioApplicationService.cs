@@ -34,57 +34,15 @@ namespace FIAP_HealthMed.Application.Service
 
       public async Task<string> CadastrarAsync(UsuarioModelRequest request)
         {
-
-            var existe = await _usuarioDomainService.VerificarExistentePorCpfOuEmailAsync(request.CPF, request.Email);
-           
-            if (existe)
-            {
-                throw new InvalidOperationException("Usuário já cadastrado com este CPF ou Email.");
-            }
-
-            
-            if (!Enum.TryParse<Role>(request.TipoUsuario, true, out var tipoUsuarioEnum))
-            {
-                throw new InvalidOperationException("Tipo de usuário inválido. Use 'Medico' ou 'Paciente'.");
-            }
-          
+                    
             var usuarioMensagem = _mapper.Map<UsuarioMensagem>(request);
             usuarioMensagem.SenhaHash = PasswordHasher.HashPassword(request.Senha);
-            usuarioMensagem.TipoEvento = "cadastro";
+            usuarioMensagem.TipoEvento = "Cadastrar";
           
             await _usuarioProducer.EnviarUsuarioAsync(usuarioMensagem);
 
             return "Usuário enviado para processamento assíncrono com sucesso!";
 
-
-
-            //var existe = await _usuarioDomainService.VerificarExistentePorCpfOuEmailAsync(request.CPF, request.Email);
-            //if (existe)
-            //    throw new InvalidOperationException("Usuário já cadastrado com este CPF ou Email.");
-
-            //if (!Enum.TryParse<Role>(request.TipoUsuario, true, out var tipoUsuarioEnum))
-            //    throw new InvalidOperationException("Tipo de usuário inválido. Use 'Medico' ou 'Paciente'.");
-
-            //var usuario = _mapper.Map<Usuario>(request);
-            //usuario.Role = tipoUsuarioEnum;
-            //usuario.TratarTelefone(request.Telefone);
-            //usuario.SenhaHash = PasswordHasher.HashPassword(request.Senha);
-
-            //var usuarioId = await _usuarioDomainService.CadastrarAsync(usuario);
-
-            //if (tipoUsuarioEnum == Role.Medico && request.EspecialidadeIds != null)
-            //{
-            //    var especialidadeIds = request.EspecialidadeIds
-            //        .Where(id => id.HasValue)
-            //        .Select(id => id!.Value)
-            //        .Distinct()
-            //        .ToList();
-
-            //    if (especialidadeIds.Any())
-            //        await _usuarioDomainService.InserirEspecialidadesUsuarioAsync(usuarioId, especialidadeIds);
-            //}
-
-            //return "Usuário cadastrado com sucesso!";
         }
 
         public async Task<string> InserirEspecialidadesUsuarioAsync(int usuarioId, IEnumerable<int> especialidadeIds)

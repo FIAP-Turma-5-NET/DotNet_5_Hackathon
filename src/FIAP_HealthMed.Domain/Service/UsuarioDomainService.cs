@@ -16,6 +16,7 @@ namespace FIAP_HealthMed.Domain.Service
 
         public async Task<int> CadastrarAsync(Usuario usuario)
         {
+
             usuario.TratarTelefone(usuario.Telefone);
 
             var id = await _usuarioRepository.CadastrarAsync(usuario);

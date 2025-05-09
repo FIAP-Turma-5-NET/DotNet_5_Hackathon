@@ -19,14 +19,13 @@ namespace FIAP_HealthMed.Application.Mapper
             .ForMember(dest => dest.DDD, opt => opt.Ignore());     
 
             CreateMap<ConsultaModelRequest, Consulta>();
-
             CreateMap<EspecialidadeModelRequest, Especialidade>();
-
             CreateMap<HorarioDisponivelModelRequest, HorarioDisponivel>();
 
-            CreateMap<UsuarioMensagem, Usuario>().ForMember(x => x.Telefone, cd => cd.MapFrom(map => map.Telefone));
-
+            //RabbitMQ Producer
+            CreateMap<UsuarioMensagem, Usuario>().ForMember(x => x.Telefone, cd => cd.MapFrom(map => map.Telefone));                
             CreateMap<UsuarioModelRequest, UsuarioMensagem>();
+            CreateMap<ConsultaModelRequest, ConsultaMensagem>();
 
 
 

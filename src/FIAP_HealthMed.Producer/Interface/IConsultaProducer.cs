@@ -7,8 +7,8 @@ using Shared.Model;
 
 namespace FIAP_HealthMed.Producer.Interface
 {
-    public interface IUsuarioProducer
+    public interface IConsultaProducer
     {
-        Task EnviarUsuarioAsync(UsuarioMensagem mensagem);
+        Task EnviarConsultaAsync(ConsultaMensagem mensagem);
     }
 }

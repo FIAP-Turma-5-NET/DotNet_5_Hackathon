@@ -5,6 +5,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+      target: api
     container_name: fiap_healthmed_api
     ports:
       - "7209:8080"
@@ -62,6 +63,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+      target: worker
     container_name: fiap_healthmed-worker
     environment:
       - DOTNET_ENVIRONMENT=Development
@@ -69,7 +71,7 @@ services:
       - MassTransit_Servidor=host.docker.internal
       - MassTransit_Usuario=guest
       - MassTransit_Senha=guest
-      - MassTransit_Filas_ContatoFila=usuario-queue
+      - MassTransit_Filas_UsuarioFila=usuario-queue
     depends_on:
       mysql:
         condition: service_healthy

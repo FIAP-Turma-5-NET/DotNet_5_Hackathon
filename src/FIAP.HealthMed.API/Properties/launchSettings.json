@@ -14,7 +14,11 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "Connection_String": "Server=localhost;Port=3306;Database=HealthMed;Uid=root;Pwd=root;AllowPublicKeyRetrieval=True;SslMode=none;"
+        "Connection_String": "Server=localhost;Port=3306;Database=HealthMed;Uid=root;Pwd=root;AllowPublicKeyRetrieval=True;SslMode=none;",
+        "MassTransit_Servidor": "host.docker.internal",
+        "MassTransit_Usuario": "guest",
+        "MassTransit_Senha": "guest",
+        "MassTransit_Filas_UsuarioFila": "usuario-queue"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7289;http://localhost:5134"

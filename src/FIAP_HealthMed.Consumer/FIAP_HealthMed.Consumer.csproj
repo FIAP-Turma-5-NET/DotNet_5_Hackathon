@@ -15,9 +15,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\FIAP_HealthMed.Domain\FIAP_HealthMed.Domain.csproj" />
 	  <ProjectReference Include="..\Shared\Shared.csproj" />
-	  <ProjectReference Include="..\src\FIAP_HealthMed.CrossCutting\FIAP_HealthMed.CrossCutting.csproj" />
-	  <ProjectReference Include="..\src\FIAP_HealthMed.Domain\FIAP_HealthMed.Domain.csproj" />	  
+	  <ProjectReference Include="..\FIAP_HealthMed.CrossCutting\FIAP_HealthMed.CrossCutting.csproj" />
 	</ItemGroup>
 	
 	<ItemGroup>

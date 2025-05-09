@@ -1,8 +1,6 @@
-﻿using System.Runtime.CompilerServices;
-using AutoMapper;
+﻿using AutoMapper;
 using FIAP_HealthMed.Application.Interface;
 using FIAP_HealthMed.Application.Model.Consulta;
-using FIAP_HealthMed.Domain.Entity;
 using FIAP_HealthMed.Domain.Enums;
 using FIAP_HealthMed.Domain.Interface.Repository;
 using FIAP_HealthMed.Producer.Interface;

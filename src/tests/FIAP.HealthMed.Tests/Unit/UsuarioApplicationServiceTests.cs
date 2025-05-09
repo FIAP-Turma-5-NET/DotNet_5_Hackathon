@@ -9,6 +9,8 @@ using FIAP_HealthMed.Domain.Interface.Services;
 using FIAP_HealthMed.Producer.Interface;
 using Moq;
 
+using Shared.Model;
+
 namespace FIAP.HealthMed.Tests.Unit
 {
     public class UsuarioApplicationServiceTests
@@ -35,7 +37,7 @@ namespace FIAP.HealthMed.Tests.Unit
         }
 
         [Fact]
-        public async Task CadastrarUsuario_DeveRetornarMensagemDeSucesso_QuandoDadosSaoValidos()
+        public async Task CadastrarUsuario_DeveEnviarMensagemParaProducer_QuandoDadosSaoValidos()
         {
             // Arrange
             var request = new UsuarioModelRequest
@@ -49,7 +51,7 @@ namespace FIAP.HealthMed.Tests.Unit
                 TipoUsuario = "Medico"
             };
 
-            var usuario = new Usuario
+            var usuarioMensagem = new UsuarioMensagem
             {
                 Nome = request.Nome,
                 CPF = request.CPF,
@@ -57,24 +59,41 @@ namespace FIAP.HealthMed.Tests.Unit
                 SenhaHash = "hashed-password",
                 DDD = request.DDD,
                 Telefone = request.Telefone,
-                Role = Role.Medico
+                TipoUsuario = request.TipoUsuario,
+                TipoEvento = "cadastro"
             };
 
-            _mapperMock
-                .Setup(mapper => mapper.Map<Usuario>(request))
-                .Returns(usuario);
-
             _usuarioDomainServiceMock
-                .Setup(service => service.CadastrarAsync(usuario))
-                .ReturnsAsync(1);
+                .Setup(service => service.VerificarExistentePorCpfOuEmailAsync(request.CPF, request.Email))
+                .ReturnsAsync(false);
+
+            _mapperMock
+                .Setup(mapper => mapper.Map<UsuarioMensagem>(request))
+                .Returns(usuarioMensagem);
+
+            _usuarioProducer
+                .Setup(producer => producer.EnviarUsuarioAsync(It.IsAny<UsuarioMensagem>()))
+                .Returns(Task.CompletedTask);
 
             // Act
             var resultado = await _service.CadastrarAsync(request);
 
             // Assert
-            Assert.Equal("Usuário cadastrado com sucesso!", resultado);
-            _usuarioDomainServiceMock.Verify(service => service.CadastrarAsync(usuario), Times.Once);
+            Assert.Equal("Usuário enviado para processamento assíncrono com sucesso!", resultado);
+            _usuarioDomainServiceMock.Verify(service => service.VerificarExistentePorCpfOuEmailAsync(request.CPF, request.Email), Times.Once);
+            _mapperMock.Verify(mapper => mapper.Map<UsuarioMensagem>(request), Times.Once);
+            _usuarioProducer.Verify(producer => producer.EnviarUsuarioAsync(It.Is<UsuarioMensagem>(m =>
+                m.Nome == usuarioMensagem.Nome &&
+                m.CPF == usuarioMensagem.CPF &&
+                m.Email == usuarioMensagem.Email &&
+                m.SenhaHash == usuarioMensagem.SenhaHash &&
+                m.DDD == usuarioMensagem.DDD &&
+                m.Telefone == usuarioMensagem.Telefone &&
+                m.TipoUsuario == usuarioMensagem.TipoUsuario &&
+                m.TipoEvento == usuarioMensagem.TipoEvento
+            )), Times.Once);
         }
+
 
         [Fact]
         public async Task ObterUsuarioPorId_DeveRetornarUsuario_QuandoUsuarioExiste()

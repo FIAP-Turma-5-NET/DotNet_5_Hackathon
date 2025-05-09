@@ -11,6 +11,13 @@
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="8.3.3" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+		<PackageReference Include="MySqlConnector" Version="2.4.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Shared\Shared.csproj" />
+	  <ProjectReference Include="..\src\FIAP_HealthMed.CrossCutting\FIAP_HealthMed.CrossCutting.csproj" />
+	  <ProjectReference Include="..\src\FIAP_HealthMed.Domain\FIAP_HealthMed.Domain.csproj" />	  
 	</ItemGroup>
 	
 	<ItemGroup>

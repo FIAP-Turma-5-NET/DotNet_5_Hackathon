@@ -15,6 +15,7 @@ services:
       - MassTransit_Usuario=guest
       - MassTransit_Senha=guest
       - MassTransit_Filas_UsuarioFila=usuario-queue
+      - MassTransit_Filas_ConsultaFila=consulta-queue
     depends_on:
       mysql:
         condition: service_healthy
@@ -31,7 +32,7 @@ services:
     ports:
       - "3360:3306"
     volumes:
-      - ./src/FIAP_HealthMed.Data/Scripts:/docker-entrypoint-initdb.d # Perguntar como ele executa isso. <---------------
+      - ./src/FIAP_HealthMed.Data/Scripts:/docker-entrypoint-initdb.d
     restart: always
     networks:
       - default
@@ -54,5 +55,25 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - default
+
+  worker:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: fiap_healthmed-worker
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      - Connection_String=Server=mysql;port=3306;database=HealthMed;uid=root;pwd=202406
+      - MassTransit_Servidor=host.docker.internal
+      - MassTransit_Usuario=guest
+      - MassTransit_Senha=guest
+      - MassTransit_Filas_ContatoFila=usuario-queue
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
       - default

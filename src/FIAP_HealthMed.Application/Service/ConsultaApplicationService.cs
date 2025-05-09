@@ -1,9 +1,12 @@
-﻿using AutoMapper;
+﻿using System.Runtime.CompilerServices;
+using AutoMapper;
 using FIAP_HealthMed.Application.Interface;
 using FIAP_HealthMed.Application.Model.Consulta;
 using FIAP_HealthMed.Domain.Entity;
 using FIAP_HealthMed.Domain.Enums;
 using FIAP_HealthMed.Domain.Interface.Repository;
+using FIAP_HealthMed.Producer.Interface;
+using Shared.Model;
 
 namespace FIAP_HealthMed.Application.Service
 {
@@ -11,11 +14,13 @@ namespace FIAP_HealthMed.Application.Service
     {
         private readonly IConsultaDomainService _consultaDomainService;
         private readonly IMapper _mapper;
+        private readonly IConsultaProducer _consultaProducer;
 
-        public ConsultaApplicationService(IConsultaDomainService consultaDomainService, IMapper mapper)
+        public ConsultaApplicationService(IConsultaDomainService consultaDomainService, IMapper mapper, IConsultaProducer consultaProducer)
         {
             _consultaDomainService = consultaDomainService;
             _mapper = mapper;
+            _consultaProducer = consultaProducer;
         }
         public async Task<string> AceitarConsulta(int consultaId, int usuarioId)
         {
@@ -24,8 +29,15 @@ namespace FIAP_HealthMed.Application.Service
 
         public async Task<string> AgendarConsulta(ConsultaModelRequest request)
         {
-            var entity = _mapper.Map<Consulta>(request);
-            return await _consultaDomainService.AgendarConsultaAsync(entity);
+            if (request.DataHora < DateTime.UtcNow)
+                throw new InvalidOperationException("A data da consulta deve ser futura.");
+
+            var mensagem = _mapper.Map<ConsultaMensagem>(request);
+            mensagem.TipoEvento = "Cadastrar";
+
+            await _consultaProducer.EnviarConsultaAsync(mensagem);
+
+            return "Consulta enviada para processamento assíncrono com sucesso!";
         }
 
         public Task<string> CancelarConsulta(int consultaId, int usuarioId, string justificativa)

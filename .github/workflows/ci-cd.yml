@@ -80,7 +80,7 @@ jobs:
         chmod 600 key.pem
 
         ssh -i key.pem -o StrictHostKeyChecking=no rodrigo@100.107.244.124 << 'EOF'
-          cd /caminho/do/seu/projeto
+          cd C:\Users\rodri\source\repos\FIAP-Turma-5-NET\DotNet_5_Hackathon
           git pull origin main
           docker-compose down
           docker-compose up --build -d

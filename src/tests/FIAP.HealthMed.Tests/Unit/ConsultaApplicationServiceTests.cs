@@ -7,6 +7,7 @@ using FIAP_HealthMed.Domain.Enums;
 using FIAP_HealthMed.Domain.Interface.Repository;
 using FIAP_HealthMed.Producer.Interface;
 using Moq;
+using Shared.Model;
 
 namespace FIAP.HealthMed.Tests.Unit
 {

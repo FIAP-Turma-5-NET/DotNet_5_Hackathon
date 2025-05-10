@@ -1,66 +1,51 @@
 # Nome do workflow que aparecerá no GitHub Actions
 name: CI/CD Pipeline
 
-# Define quando o workflow será executado
 on:
-  # Executa quando houver push na branch main
   push:
     branches: [ main ]
-  # Executa quando houver pull request para a branch main
   pull_request:
     branches: [ main ]
 
-# Variáveis de ambiente que serão usadas em todo o workflow
 env:
   DOTNET_VERSION: '9.0.100'
   PROJECT_PATH: 'src/FIAP.HealthMed.API/FIAP.HealthMed.API.csproj'
 
 jobs:
-  # Job de build e teste
   build-and-test:
-    # Define o sistema operacional que executará o job
     runs-on: ubuntu-latest
-    
+
     steps:
-    # Mensagem de início do job
     - name: warning starting
       run: echo "Iniciando jobs!"
 
-    # Baixa o código do repositório
     - name: Checkout code
       uses: actions/checkout@v4
-    
-    # Configura o ambiente .NET com a versão especificada
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-    
-    # Restaura os pacotes NuGet necessários
+
     - name: Restore dependencies
       run: dotnet restore
-    
-    # Compila o projeto em modo Release
+
     - name: Build
       run: dotnet build --no-restore --configuration Release
-    
-    # Executa os testes e gera relatório de cobertura
+
     - name: Test
       run: dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./coverage
-    
-    # Faz upload do relatório de cobertura como artefato
+
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
         path: ./coverage
         retention-days: 7
-    
-    # Publica a aplicação para deploy
+
     - name: Publish
       run: dotnet publish --no-build --configuration Release --output ./publish
-    
-    # Faz upload dos arquivos publicados como artefato
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -68,42 +53,15 @@ jobs:
         path: ./publish
         retention-days: 7
 
-    # Mensagem de fim do job
     - name: warning finishing
       run: echo "Finalizando jobs!"
 
-  # Job de deploy para staging
-  deploy-staging:
+  deploy-production:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    environment: staging
-    
-    steps:
-    - name: warning starting
-      run: echo "Iniciando deploy para staging!"
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
-        path: ./publish
-    
-    - name: Deploy to staging
-      run: |
-        echo "Deploying to staging environment..."
-        # Adicione aqui os comandos de deploy para staging
-
-    - name: warning finishing
-      run: echo "Finalizando deploy para staging!"
-
-  # Job de deploy para produção
-  deploy-production:
-    needs: deploy-staging
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     environment: production
-    
+
     steps:
     - name: warning starting
       run: echo "Iniciando deploy para produção!"
@@ -113,11 +71,20 @@ jobs:
       with:
         name: build-artifacts
         path: ./publish
-    
-    - name: Deploy to production
+
+    - name: Deploy to production via SSH (Tailscale)
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        echo "Deploying to production environment..."
-        # Adicione aqui os comandos de deploy para produção
+        echo "$SSH_PRIVATE_KEY" > key.pem
+        chmod 600 key.pem
+
+        ssh -i key.pem -o StrictHostKeyChecking=no rodrigo@100.107.244.124 << 'EOF'
+          cd /caminho/do/seu/projeto
+          git pull origin main
+          docker-compose down
+          docker-compose up --build -d
+        EOF
 
     - name: warning finishing
       run: echo "Finalizando deploy para produção!"

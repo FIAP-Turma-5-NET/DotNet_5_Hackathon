@@ -32,7 +32,7 @@ namespace FIAP.HealthMed.Tests.Unit
             // Arrange
             var request = new ConsultaModelRequest
             {
-                DataHora = DateTime.UtcNow.AddDays(1),
+                DataHora = DateTime.UtcNow.AddDays(1), // Data futura
                 EspecialidadeId = 1,
                 MedicoId = 123,
                 PacienteId = 456
@@ -46,7 +46,16 @@ namespace FIAP.HealthMed.Tests.Unit
             };
             var expectedMessage = "Consulta enviada para processamento assíncrono com sucesso!";
 
-            _mapperMock.Setup(m => m.Map<ConsultaMensagem>(request)).Returns(new ConsultaMensagem());
+            var consultaMensagem = new ConsultaMensagem
+            {
+                DataHora = request.DataHora,
+                EspecialidadeId = request.EspecialidadeId,
+                MedicoId = request.MedicoId,
+                PacienteId = request.PacienteId,
+                TipoEvento = "Cadastrar"
+            };
+
+            _mapperMock.Setup(m => m.Map<ConsultaMensagem>(request)).Returns(consultaMensagem);
             _consultaProducerMock
                 .Setup(p => p.EnviarConsultaAsync(It.IsAny<ConsultaMensagem>()))
                 .Returns(Task.CompletedTask);
@@ -56,7 +65,13 @@ namespace FIAP.HealthMed.Tests.Unit
 
             // Assert
             Assert.Equal(expectedMessage, result);
-            _consultaProducerMock.Verify(p => p.EnviarConsultaAsync(It.IsAny<ConsultaMensagem>()), Times.Once);
+            _consultaProducerMock.Verify(p => p.EnviarConsultaAsync(It.Is<ConsultaMensagem>(m =>
+                m.DataHora == consultaMensagem.DataHora &&
+                m.EspecialidadeId == consultaMensagem.EspecialidadeId &&
+                m.MedicoId == consultaMensagem.MedicoId &&
+                m.PacienteId == consultaMensagem.PacienteId &&
+                m.TipoEvento == consultaMensagem.TipoEvento
+            )), Times.Once);
         }
 
         [Fact]

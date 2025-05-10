@@ -34,6 +34,11 @@ namespace FIAP_HealthMed.Application.Service
 
       public async Task<string> CadastrarAsync(UsuarioModelRequest request)
         {
+            var usuarioExiste = await _usuarioDomainService.VerificarExistentePorCpfOuEmailAsync(request.CPF, request.Email);
+            if (usuarioExiste)
+            {
+                throw new Exception("Usuário já cadastrado com este CPF ou email.");
+            }
                     
             var usuarioMensagem = _mapper.Map<UsuarioMensagem>(request);
             usuarioMensagem.SenhaHash = PasswordHasher.HashPassword(request.Senha);
@@ -42,7 +47,6 @@ namespace FIAP_HealthMed.Application.Service
             await _usuarioProducer.EnviarUsuarioAsync(usuarioMensagem);
 
             return "Usuário enviado para processamento assíncrono com sucesso!";
-
         }
 
         public async Task<string> InserirEspecialidadesUsuarioAsync(int usuarioId, IEnumerable<int> especialidadeIds)

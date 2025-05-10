@@ -14,13 +14,14 @@ namespace FIAP.HealthMed.Tests.Unit
     {
         private readonly Mock<IConsultaDomainService> _consultaDomainServiceMock;
         private readonly Mock<IMapper> _mapperMock;
-        private readonly ConsultaApplicationService _service;
         private readonly Mock<IConsultaProducer> _consultaProducerMock;
+        private readonly ConsultaApplicationService _service;
 
         public ConsultaApplicationServiceTests()
         {
             _consultaDomainServiceMock = new Mock<IConsultaDomainService>();
             _mapperMock = new Mock<IMapper>();
+            _consultaProducerMock = new Mock<IConsultaProducer>();
             _service = new ConsultaApplicationService(_consultaDomainServiceMock.Object, _mapperMock.Object, _consultaProducerMock.Object);
         }
 

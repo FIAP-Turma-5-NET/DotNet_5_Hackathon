@@ -1,4 +1,4 @@
-# CI/CD com Runner Local (KRATOS-PC)
+# Nome do workflow que aparecerá no GitHub Actions
 name: CI/CD Pipeline
 
 on:
@@ -12,11 +12,14 @@ env:
   PROJECT_PATH: 'src/FIAP.HealthMed.API/FIAP.HealthMed.API.csproj'
 
 jobs:
-  build-and-deploy:
-    runs-on: self-hosted
+  build-and-test:
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout do código
+    - name: warning starting
+      run: echo "Iniciando jobs!"
+
+    - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Setup .NET
@@ -24,22 +27,64 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Restaurar dependências
+    - name: Restore dependencies
       run: dotnet restore
 
-    - name: Build do projeto
+    - name: Build
       run: dotnet build --no-restore --configuration Release
 
-    - name: Rodar testes
-      run: dotnet test --no-build --configuration Release
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./coverage
 
-    - name: Publicar build
-      run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o ./publish
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ./coverage
+        retention-days: 7
 
-    - name: Deploy via Docker Compose
+    - name: Publish
+      run: dotnet publish --no-build --configuration Release --output ./publish
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: ./publish
+        retention-days: 7
+
+    - name: warning finishing
+      run: echo "Finalizando jobs!"
+
+  deploy-production:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+    - name: warning starting
+      run: echo "Iniciando deploy para produção!"
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: ./publish
+
+    - name: Deploy to production via SSH (Tailscale)
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        docker-compose down
-        docker-compose up --build -d
+        echo "$SSH_PRIVATE_KEY" > key.pem
+        chmod 600 key.pem
 
-    - name: Finalizando pipeline
-      run: echo "Deploy concluído com sucesso no KRATOS-PC!"
+        ssh -i key.pem -o StrictHostKeyChecking=no rodrigo@100.107.244.124 powershell -Command "
+          cd 'C:\\Users\\rodri\\source\\repos\\FIAP-Turma-5-NET\\DotNet_5_Hackathon';
+          git pull origin main;
+          docker-compose down;
+          docker-compose up --build -d;
+        "
+
+    - name: warning finishing
+      run: echo "Finalizando deploy para produção!"

@@ -31,7 +31,7 @@ namespace FIAP.HealthMed.Tests.Unit
             // Arrange
             var request = new ConsultaModelRequest
             {
-                DataHora = DateTime.Now,
+                DataHora = DateTime.UtcNow.AddDays(1),
                 EspecialidadeId = 1,
                 MedicoId = 123,
                 PacienteId = 456
@@ -43,19 +43,19 @@ namespace FIAP.HealthMed.Tests.Unit
                 MedicoId = request.MedicoId,
                 PacienteId = request.PacienteId
             };
-            var expectedMessage = "Consulta agendada com sucesso!";
+            var expectedMessage = "Consulta enviada para processamento assíncrono com sucesso!";
 
-            _mapperMock.Setup(m => m.Map<Consulta>(request)).Returns(entity);
-            _consultaDomainServiceMock
-                .Setup(s => s.AgendarConsultaAsync(entity))
-                .ReturnsAsync(expectedMessage);
+            _mapperMock.Setup(m => m.Map<ConsultaMensagem>(request)).Returns(new ConsultaMensagem());
+            _consultaProducerMock
+                .Setup(p => p.EnviarConsultaAsync(It.IsAny<ConsultaMensagem>()))
+                .Returns(Task.CompletedTask);
 
             // Act
             var result = await _service.AgendarConsulta(request);
 
             // Assert
             Assert.Equal(expectedMessage, result);
-            _consultaDomainServiceMock.Verify(s => s.AgendarConsultaAsync(entity), Times.Once);
+            _consultaProducerMock.Verify(p => p.EnviarConsultaAsync(It.IsAny<ConsultaMensagem>()), Times.Once);
         }
 
         [Fact]

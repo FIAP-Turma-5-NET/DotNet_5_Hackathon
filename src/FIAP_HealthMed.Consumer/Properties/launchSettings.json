@@ -6,7 +6,7 @@
       "dotnetRunMessages": true,
         "environmentVariables": {
             "DOTNET_ENVIRONMENT": "Development",
-            "Connection_String": "Server=host.docker.internal;port=3360;database=FIAPContato;uid=root;pwd=202406",
+            "Connection_String": "Server=host.docker.internal;port=3360;database=HealthMed;uid=root;pwd=202406",
             "MassTransit_Servidor": "host.docker.internal",
             "MassTransit_Usuario": "guest",
             "MassTransit_Senha": "guest",

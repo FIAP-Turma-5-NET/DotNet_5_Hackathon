@@ -64,9 +64,71 @@ jobs:
     environment: production
 
     steps:
-    - name: Deploy app locally
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Verificar e Instalar Minikube (PowerShell)
+      shell: pwsh
       run: |
-        cd C:\Users\rodri\source\repos\FIAP-Turma-5-NET\DotNet_5_Hackathon
-        git pull origin main
-        docker-compose down
-        docker-compose up --build -d
+        $minikubeExists = Get-Command minikube -ErrorAction SilentlyContinue
+        if (-not $minikubeExists) {
+          Write-Output "Instalando Minikube..."
+          Invoke-WebRequest -OutFile minikube-installer.exe -Uri https://github.com/kubernetes/minikube/releases/latest/download/minikube-installer.exe
+          Start-Process -Wait -FilePath .\minikube-installer.exe
+          Remove-Item -Path .\minikube-installer.exe
+        } else {
+          Write-Output "Minikube já está instalado."
+        }
+
+    - name: Verificar e Instalar kubectl (PowerShell)
+      shell: pwsh
+      run: |
+        $kubectlExists = Get-Command kubectl -ErrorAction SilentlyContinue
+        if (-not $kubectlExists) {
+          Write-Output "Instalando kubectl..."
+          Invoke-WebRequest -OutFile kubectl.exe -Uri https://dl.k8s.io/release/v1.28.0/bin/windows/amd64/kubectl.exe
+          Move-Item -Path kubectl.exe -Destination C:\Windows\System32\kubectl.exe -Force
+        } else {
+          Write-Output "kubectl já está instalado."
+        }
+
+    - name: Iniciar Minikube (PowerShell)
+      shell: pwsh
+      run: |
+        $minikubeStatus = minikube status
+        if ($LASTEXITCODE -ne 0) {
+          Write-Output "Iniciando Minikube..."
+          minikube start --driver=docker
+        } else {
+          Write-Output "Minikube já está em execução."
+        }
+
+    - name: Construir e implantar no Kubernetes (PowerShell)
+      shell: pwsh
+      run: |
+        # Definir variáveis para docker build
+        $imageName = "fiap-healthmed-api"
+        $imageTag = "latest"
+        
+        # Apontar docker para o daemon do Minikube
+        minikube -p minikube docker-env | Invoke-Expression
+        
+        # Construir a imagem Docker
+        docker build -t $imageName`:$imageTag -f Dockerfile .
+        
+        # Atualizar ou criar deployment e service
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+        
+        # Verificar se o deployment é novo ou existente e fazer o rollout se necessário
+        $deploymentExists = kubectl get deployment healthmed-api -o jsonpath='{.metadata.name}' 2>$null
+        if ($deploymentExists) {
+          Write-Output "Reiniciando o deployment para aplicar as alterações..."
+          kubectl rollout restart deployment healthmed-api
+        }
+        
+        # Verificar status do deployment
+        kubectl rollout status deployment healthmed-api
+        
+        # Obter URL do serviço
+        minikube service healthmed-api --url

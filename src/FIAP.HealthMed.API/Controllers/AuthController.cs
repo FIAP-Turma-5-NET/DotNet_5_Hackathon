@@ -7,7 +7,6 @@ namespace FIAP.HealthMed.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class AuthController : ControllerBase
     {
         private readonly IAuthApplicationService _authService;
@@ -23,7 +22,6 @@ namespace FIAP.HealthMed.API.Controllers
         /// <param name="request">Modelo contendo as credenciais de login do usuário.</param>
         /// <returns>Retorna um token JWT caso as credenciais sejam válidas.</returns>
         [HttpPost("login")]
-        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] AuthLoginModelRequest request)
         {
             try

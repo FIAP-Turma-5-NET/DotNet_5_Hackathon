@@ -74,58 +74,58 @@ jobs:
         minikube delete
         minikube start --driver=docker --kubernetes-version=${{ env.K8S_VERSION }} --ports=8080:80,32006:32006,32072:32072,32080:32080 --extra-config=kubelet.housekeeping-interval=10s
         minikube status
-      shell: bash
+      shell: powershell
 
     - name: Criar imagens Docker
       run: |
-        eval $(minikube -p minikube docker-env)
+        & minikube -p minikube docker-env | Invoke-Expression
         
-        echo "Criando a imagem da API"
+        Write-Output "Criando a imagem da API"
         docker build --target api -f Dockerfile -t fiap/healthmed-api:1.0.0 .
         
-        echo "Criando a imagem do Worker"
+        Write-Output "Criando a imagem do Worker"
         docker build --target worker -f Dockerfile -t fiap/healthmed-worker:1.0.0 .
         
-        echo "Imagens criadas com sucesso!"
-      shell: bash
+        Write-Output "Imagens criadas com sucesso!"
+      shell: powershell
 
     - name: Aplicar configurações Kubernetes
       run: |
-        cd k8s
+        Set-Location k8s
         
-        echo ">> Aplicando namespace"
+        Write-Output ">> Aplicando namespace"
         kubectl apply -f namespace.yaml
         
-        echo ">> Aplicando ConfigMap"
+        Write-Output ">> Aplicando ConfigMap"
         kubectl apply -f configmap.yaml
         
-        echo ">> Aplicando Secrets"
+        Write-Output ">> Aplicando Secrets"
         kubectl apply -f secrets.yaml
         
-        echo ">> Aplicando recursos do Banco de Dados (MySQL)"
+        Write-Output ">> Aplicando recursos do Banco de Dados (MySQL)"
         kubectl apply -f DataBase/
         
-        echo ">> Aplicando recursos de Monitoramento (RabbitMQ)"
+        Write-Output ">> Aplicando recursos de Monitoramento (RabbitMQ)"
         kubectl apply -f Monitoring/
         
-        echo ">> Aplicando Service da API"
+        Write-Output ">> Aplicando Service da API"
         kubectl apply -f Application/api-service.yaml
         
-        echo ">> Aplicando Deployments da Aplicação (API e Worker)"
+        Write-Output ">> Aplicando Deployments da Aplicação (API e Worker)"
         kubectl apply -f Application/api-deployment.yaml
         kubectl apply -f Application/worker-deployment.yaml
         
-        echo ">> Aplicando HPAs da Aplicação (API e Worker)"
+        Write-Output ">> Aplicando HPAs da Aplicação (API e Worker)"
         kubectl apply -f Application/hpa-api.yaml
         kubectl apply -f Application/hpa-worker.yaml
         
-        echo "Todos os recursos foram aplicados com sucesso!"
-      shell: bash
+        Write-Output "Todos os recursos foram aplicados com sucesso!"
+      shell: powershell
 
     - name: Verificar status dos pods
       run: |
-        echo "Aguardando pods iniciarem..."
-        sleep 30
+        Write-Output "Aguardando pods iniciarem..."
+        Start-Sleep -Seconds 30
         kubectl get pods -n healthmed
         kubectl get services -n healthmed
-      shell: bash
+      shell: powershell

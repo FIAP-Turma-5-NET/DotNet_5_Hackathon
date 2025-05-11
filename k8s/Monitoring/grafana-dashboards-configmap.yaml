@@ -12,7 +12,7 @@ data:
             "builtIn": 1,
             "datasource": {
               "type": "datasource",
-              "uid": "grafana"
+              "uid": "prometheus"
             },
             "enable": true,
             "hide": true,
@@ -34,7 +34,7 @@ data:
           "datasource": {
             "default": true,
             "type": "prometheus",
-            "uid": "be0edkhkn99mof"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -91,7 +91,7 @@ data:
           },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "ae05cp74m5reoc" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "editorMode": "code",
               "exemplar": false,
               "expr": "sum by (code) (rate(http_requests_received_total[5m]) * 300)",
@@ -110,7 +110,7 @@ data:
           "datasource": {
             "default": true,
             "type": "prometheus",
-            "uid": "be0edkhkn99mof"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -164,7 +164,7 @@ data:
           },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "ae05cp74m5reoc" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "editorMode": "code",
               "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, method, endpoint)) > 0",
               "instant": false,
@@ -180,7 +180,7 @@ data:
           "datasource": {
             "default": true,
             "type": "prometheus",
-            "uid": "be0edkhkn99mof"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -234,7 +234,7 @@ data:
           },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "ae05cp74m5reoc" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "editorMode": "code",
               "expr": "sum(rate(process_cpu_seconds_total[5m])) by (job)",
               "instant": false,
@@ -305,7 +305,7 @@ data:
           "pluginVersion": "11.2.0",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "ae05cp74m5reoc" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "editorMode": "code",
               "exemplar": false,
               "expr": "process_private_memory_bytes",
@@ -323,7 +323,7 @@ data:
           "datasource": {
             "default": true,
             "type": "prometheus",
-            "uid": "be0edkhkn99mof"
+            "uid": "prometheus"
           },
           "description": "",
           "fieldConfig": {
@@ -361,7 +361,7 @@ data:
           "pluginVersion": "11.2.0",
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "be0edkhkn99mof" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "editorMode": "code",
               "expr": "histogram_quantile(0.95, rate(mysqlconnector_db_client_connections_wait_time_bucket[5m]))",
               "format": "table",

@@ -68,18 +68,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Verificar Docker
-      run: |
-        try {
-          $dockerInfo = docker info
-          Write-Host "Docker detectado com sucesso."
-        } catch {
-          Write-Host "Docker não está ativo ou não foi encontrado."
-          Write-Host "Certifique-se de que o Docker Desktop está iniciado."
-          exit 1
-        }
-      shell: pwsh
-
     - name: Configurar e iniciar Minikube
       run: |
         minikube stop

@@ -1,15 +1,13 @@
 ﻿using FIAP_HealthMed.Application.Interface;
 using FIAP_HealthMed.Application.Model.Usuario;
-
-
 using Microsoft.AspNetCore.Mvc;
-
-using Org.BouncyCastle.Asn1.Ocsp;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FIAP_HealthMed.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioApplicationService _usuarioApplicationService;
@@ -28,6 +26,7 @@ namespace FIAP_HealthMed.API.Controllers
         /// <response code="200">Sucesso</response>
         /// <response code="404">Erro ao cadastrar usuário</response>
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Cadastrar([FromBody] UsuarioModelRequest request)
         {
             try
@@ -76,6 +75,5 @@ namespace FIAP_HealthMed.API.Controllers
             var result = await _usuarioApplicationService.ObterPorId(id);
             return result is null ? NotFound() : Ok(result);
         }
-
     }
 }

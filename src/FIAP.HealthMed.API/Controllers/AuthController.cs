@@ -7,6 +7,7 @@ namespace FIAP.HealthMed.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class AuthController : ControllerBase
     {
         private readonly IAuthApplicationService _authService;

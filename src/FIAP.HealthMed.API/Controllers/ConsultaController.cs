@@ -2,11 +2,13 @@
 using FIAP_HealthMed.Application.Model.Consulta;
 using FIAP_HealthMed.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FIAP_HealthMed.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize]
     public class ConsultaController : ControllerBase
     {
         private readonly IConsultaApplicationService _consultaService;

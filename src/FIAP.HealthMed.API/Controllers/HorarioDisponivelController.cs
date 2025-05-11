@@ -1,11 +1,13 @@
 ﻿using FIAP_HealthMed.Application.Interface;
 using FIAP_HealthMed.Application.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FIAP_HealthMed.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize]
     public class HorarioDisponivelController : ControllerBase
     {
         private readonly IHorarioDisponivelApplicationService _horarioService;

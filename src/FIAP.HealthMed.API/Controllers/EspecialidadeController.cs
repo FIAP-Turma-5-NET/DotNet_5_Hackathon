@@ -2,11 +2,13 @@
 using FIAP_HealthMed.Application.Model;
 using FIAP_HealthMed.Application.Model.Especialidade;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FIAP_HealthMed.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize]
     public class EspecialidadeController : ControllerBase
     {
         private readonly IEspecialidadeApplicationService _especialidadeService;

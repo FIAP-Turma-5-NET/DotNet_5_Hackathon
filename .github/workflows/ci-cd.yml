@@ -9,6 +9,7 @@ on:
 env:
   DOTNET_VERSION: '9.0.100'
   PROJECT_PATH: 'src/FIAP.HealthMed.API/FIAP.HealthMed.API.csproj'
+  K8S_VERSION: 'v1.29.4'
 
 jobs:
   build:
@@ -55,7 +56,7 @@ jobs:
       run: dotnet restore
 
     - name: Run unit tests
-      run: dotnet test src/tests/FIAP.HealthMed.Tests/FIAP.HealthMed.Tests.csproj --configuration Release
+      run: dotnet test src/FIAP.HealthMed.Tests/FIAP.HealthMed.Tests.csproj --configuration Release
 
   deploy:
     needs: [test]
@@ -64,9 +65,67 @@ jobs:
     environment: production
 
     steps:
-    - name: Deploy app locally
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configurar e iniciar Minikube
       run: |
-        cd C:\Users\rodri\source\repos\FIAP-Turma-5-NET\DotNet_5_Hackathon
-        git pull origin main
-        docker-compose down
-        docker-compose up --build -d
+        minikube stop
+        minikube delete
+        minikube start --driver=docker --kubernetes-version=${{ env.K8S_VERSION }} --ports=8080:80,32006:32006,32072:32072,32080:32080 --extra-config=kubelet.housekeeping-interval=10s
+        minikube status
+      shell: powershell
+
+    - name: Criar imagens Docker
+      run: |
+        & minikube -p minikube docker-env | Invoke-Expression
+        
+        Write-Output "Criando a imagem da API"
+        docker build --target api -f Dockerfile -t fiap/healthmed-api:1.0.0 .
+        
+        Write-Output "Criando a imagem do Worker"
+        docker build --target worker -f Dockerfile -t fiap/healthmed-worker:1.0.0 .
+        
+        Write-Output "Imagens criadas com sucesso!"
+      shell: powershell
+
+    - name: Aplicar configurações Kubernetes
+      run: |
+        Set-Location k8s
+        
+        Write-Output ">> Aplicando namespace"
+        kubectl apply -f namespace.yaml
+        
+        Write-Output ">> Aplicando ConfigMap"
+        kubectl apply -f configmap.yaml
+        
+        Write-Output ">> Aplicando Secrets"
+        kubectl apply -f secrets.yaml
+        
+        Write-Output ">> Aplicando recursos do Banco de Dados (MySQL)"
+        kubectl apply -f DataBase/
+        
+        Write-Output ">> Aplicando recursos de Monitoramento (RabbitMQ)"
+        kubectl apply -f Monitoring/
+        
+        Write-Output ">> Aplicando Service da API"
+        kubectl apply -f Application/api-service.yaml
+        
+        Write-Output ">> Aplicando Deployments da Aplicação (API e Worker)"
+        kubectl apply -f Application/api-deployment.yaml
+        kubectl apply -f Application/worker-deployment.yaml
+        
+        Write-Output ">> Aplicando HPAs da Aplicação (API e Worker)"
+        kubectl apply -f Application/hpa-api.yaml
+        kubectl apply -f Application/hpa-worker.yaml
+        
+        Write-Output "Todos os recursos foram aplicados com sucesso!"
+      shell: powershell
+
+    - name: Verificar status dos pods
+      run: |
+        Write-Output "Aguardando pods iniciarem..."
+        Start-Sleep -Seconds 30
+        kubectl get pods -n healthmed
+        kubectl get services -n healthmed
+      shell: powershell

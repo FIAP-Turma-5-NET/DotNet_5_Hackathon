@@ -123,6 +123,64 @@ docker-compose down -v
 
 ---
 
+# Projeto no Kubernetes (Windows)
+
+⚠️ Instalar Minikube: https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download
+
+⚠️Abra :
+
+👉 Abra o Docker desktop e o Visual Code com o código-font.
+
+- No terminar Git Bash entre no caminho que estão o scripts
+
+```console
+cd scriptInicial
+```
+
+- Após entrar no caminho execute os scripts:
+
+```console
+sh MinikubeStart.sh
+```
+
+```console
+sh CriarImagem.sh
+```
+
+- Minikube por Dasboard
+
+```console
+minikube dashboard
+```
+
+⚠️ Após terminar de subir as imagens
+
+- Em um novo terminal Git Bash entre no caminho que está o K8S.
+
+```console
+cd  k8s
+```
+
+- Execute o script
+
+```console
+sh apply.sh
+```
+
+---
+
+## Acessar API, Prometheus e Grafana Kubernetes (Minikube)
+
+👉 No browser acesse a API pela a url: http://localhost:32080/swagger/index.html
+
+👉 No browser acesse a RabbitMQ pela a url: http://localhost:32072/
+
+👉 No browser acesse a Prometheus pela a url: http://localhost:31003/
+
+👉 No browser acesse a Grafana pela a url: http://localhost:31004/
+
+---
+
 ## ✍️ Autor
 
 **Seu Nome** - [@seuusuario](https://github.com/seuusuario)

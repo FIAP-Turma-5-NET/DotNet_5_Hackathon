@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using MySqlConnector;
 using Swashbuckle.AspNetCore.Filters;
 using MassTransit;
+using Prometheus;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +22,7 @@ var configuration = new ConfigurationBuilder()
 var secretJwt = configuration.GetValue<string>("SecretJWT");
 if (string.IsNullOrEmpty(secretJwt))
 {
-    throw new InvalidOperationException("A chave 'SecretJWT' não foi encontrada ou está vazia no arquivo de configuração.");
+    throw new InvalidOperationException("A chave 'SecretJWT' nï¿½o foi encontrada ou estï¿½ vazia no arquivo de configuraï¿½ï¿½o.");
 }
 
 var key = Encoding.ASCII.GetBytes(secretJwt);
@@ -57,7 +58,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "FIAP Health Med",
         Version = "v1",
-        Description = "API para gerenciamento de consultas médicas e usuários"
+        Description = "API para gerenciamento de consultas mï¿½dicas e usuï¿½rios"
     });
 
     c.ExampleFilters();
@@ -66,7 +67,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Description =
             "JWT Authorization Header - utilizado com Bearer Authentication.\r\n\r\n" +
-            "Digite 'Bearer' [espaço] e então seu token no campo abaixo.\r\n\r\n" +
+            "Digite 'Bearer' [espaï¿½o] e entï¿½o seu token no campo abaixo.\r\n\r\n" +
             "Exemplo (informar sem as aspas): 'Bearer 12345abcdef'",
         Name = "Authorization",
         In = ParameterLocation.Header,
@@ -124,7 +125,7 @@ builder.Services.AddMassTransit(x =>
 
 
 
-//Configuração para buscar a connection
+//Configuraï¿½ï¿½o para buscar a connection
 var connectionString = Environment.GetEnvironmentVariable("Connection_String");
 builder.Services.AddScoped<IDbConnection>((connection) => new MySqlConnection(connectionString));
 
@@ -133,6 +134,15 @@ builder.Services.AddRegisterCommonServices();
 builder.Services.AddRegisterServices();
 
 var app = builder.Build();
+
+app.UseMetricServer();
+
+//Metricas Prometheus
+app.UseHttpMetrics(options =>
+{
+    options.AddCustomLabel("host", context => context.Request.Host.Host);
+});
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

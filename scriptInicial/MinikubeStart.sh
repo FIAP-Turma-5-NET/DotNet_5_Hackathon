@@ -12,8 +12,8 @@ fi
 echo "Docker detectado com sucesso."
 
 # Define Kubernetes version e portas expostas
-K8S_VERSION="v1.29.4"
-PORTS="8080:80,32006:32006,32072:32072,32080:32080"
+K8S_VERSION="v1.30.0"
+PORTS="8080:80,32006:32006,32072:32072,32080:32080,31003:31003,31004:31004 "
 
 echo "Iniciando Minikube com Kubernetes $K8S_VERSION usando Docker..."
 

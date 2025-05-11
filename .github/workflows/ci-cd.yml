@@ -1,123 +1,72 @@
-# Nome do workflow que aparecerá no GitHub Actions
 name: CI/CD Pipeline
 
-# Define quando o workflow será executado
 on:
-  # Executa quando houver push na branch main
   push:
     branches: [ main ]
-  # Executa quando houver pull request para a branch main
   pull_request:
     branches: [ main ]
 
-# Variáveis de ambiente que serão usadas em todo o workflow
 env:
   DOTNET_VERSION: '9.0.100'
   PROJECT_PATH: 'src/FIAP.HealthMed.API/FIAP.HealthMed.API.csproj'
 
 jobs:
-  # Job de build e teste
-  build-and-test:
-    # Define o sistema operacional que executará o job
-    runs-on: ubuntu-latest
-    
-    steps:
-    # Mensagem de início do job
-    - name: warning starting
-      run: echo "Iniciando jobs!"
+  build:
+    runs-on: self-hosted
 
-    # Baixa o código do repositório
+    steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
-    # Configura o ambiente .NET com a versão especificada
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-    
-    # Restaura os pacotes NuGet necessários
+
     - name: Restore dependencies
       run: dotnet restore
-    
-    # Compila o projeto em modo Release
+
     - name: Build
       run: dotnet build --no-restore --configuration Release
-    
-    # Executa os testes e gera relatório de cobertura
-    - name: Test
-      run: dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage" --results-directory ./coverage
-    
-    # Faz upload do relatório de cobertura como artefato
-    - name: Upload coverage report
+
+    - name: Publish build output
+      run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o ./publish
+
+    - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
-        name: coverage-report
-        path: ./coverage
-        retention-days: 7
-    
-    # Publica a aplicação para deploy
-    - name: Publish
-      run: dotnet publish --no-build --configuration Release --output ./publish
-    
-    # Faz upload dos arquivos publicados como artefato
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifacts
+        name: build-artifact
         path: ./publish
-        retention-days: 7
 
-    # Mensagem de fim do job
-    - name: warning finishing
-      run: echo "Finalizando jobs!"
+  test:
+    needs: build
+    runs-on: self-hosted
 
-  # Job de deploy para staging
-  deploy-staging:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    environment: staging
-    
     steps:
-    - name: warning starting
-      run: echo "Iniciando deploy para staging!"
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
       with:
-        name: build-artifacts
-        path: ./publish
-    
-    - name: Deploy to staging
-      run: |
-        echo "Deploying to staging environment..."
-        # Adicione aqui os comandos de deploy para staging
+        dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: warning finishing
-      run: echo "Finalizando deploy para staging!"
+    - name: Restore dependencies
+      run: dotnet restore
 
-  # Job de deploy para produção
-  deploy-production:
-    needs: deploy-staging
-    runs-on: ubuntu-latest
+    - name: Run unit tests
+      run: dotnet test src/tests/FIAP.HealthMed.Tests/FIAP.HealthMed.Tests.csproj --configuration Release
+
+  deploy:
+    needs: [test]
+    runs-on: self-hosted
     if: github.ref == 'refs/heads/main'
     environment: production
-    
+
     steps:
-    - name: warning starting
-      run: echo "Iniciando deploy para produção!"
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
-        path: ./publish
-    
-    - name: Deploy to production
+    - name: Deploy app locally
       run: |
-        echo "Deploying to production environment..."
-        # Adicione aqui os comandos de deploy para produção
-
-    - name: warning finishing
-      run: echo "Finalizando deploy para produção!"
+        cd C:\Users\rodri\source\repos\FIAP-Turma-5-NET\DotNet_5_Hackathon
+        git pull origin main
+        docker-compose down
+        docker-compose up --build -d

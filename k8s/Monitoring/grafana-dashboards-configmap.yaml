@@ -4,21 +4,37 @@ metadata:
   name: grafana-dashboards
   namespace: fiap-healthmed
 data:
-  kubernetes-cluster.json: |
+  fiap-healthmed.json: |
     {
       "annotations": {
-        "list": []
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": {
+              "type": "datasource",
+              "uid": "grafana"
+            },
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
       },
+      "description": "Metricas usando o  prometheus-net middleware",
       "editable": true,
       "fiscalYearStartMonth": 0,
+      "gnetId": 10915,
       "graphTooltip": 0,
+      "id": 1,
       "links": [],
-      "liveNow": false,
       "panels": [
         {
           "datasource": {
+            "default": true,
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P1809F7CD0C75ACF3"
           },
           "fieldConfig": {
             "defaults": {
@@ -26,69 +42,102 @@ data:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 80,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
                   "tooltip": false,
                   "viz": false
                 },
-                "lineInterpolation": "linear",
                 "lineWidth": 1,
-                "pointSize": 5,
                 "scaleDistribution": {
                   "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
                 },
                 "thresholdsStyle": {
                   "mode": "off"
                 }
               },
+              "decimals": 0,
+              "fieldMinMax": false,
               "mappings": [],
+              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
                     "color": "green",
                     "value": null
+                  },
+                  {
+                    "color": "dark-green",
+                    "value": 200
+                  },
+                  {
+                    "color": "dark-orange",
+                    "value": 400
+                  },
+                  {
+                    "color": "dark-blue",
+                    "value": 500
                   }
                 ]
-              }
+              },
+              "unit": "none"
             },
             "overrides": []
           },
           "gridPos": {
-            "h": 8,
-            "w": 12,
+            "h": 7,
+            "w": 11,
             "x": 0,
             "y": 0
           },
-          "id": 1,
+          "id": 2,
           "options": {
+            "barRadius": 0,
+            "barWidth": 0.97,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
             "legend": {
               "calcs": [],
               "displayMode": "list",
               "placement": "bottom",
               "showLegend": true
             },
+            "orientation": "auto",
+            "showValue": "never",
+            "stacking": "none",
             "tooltip": {
               "mode": "single",
               "sort": "none"
-            }
+            },
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 300
           },
-          "title": "CPU Usage",
-          "type": "timeseries"
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "ae05cp74m5reoc"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum by (code) (rate(http_requests_received_total[5m]) * 300)",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{code}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": " Status de Resposta",
+          "type": "barchart"
         }
       ],
       "refresh": "5s",
@@ -104,8 +153,8 @@ data:
       },
       "timepicker": {},
       "timezone": "",
-      "title": "Kubernetes Cluster",
-      "uid": "kubernetes-cluster",
+      "title": "FIAP-HealthMed (Prometheus)",
+      "uid": "fiap-healthmed",
       "version": 1,
       "weekStart": ""
     } 

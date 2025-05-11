@@ -28,6 +28,8 @@ spec:
         env:
         - name: GF_SECURITY_ADMIN_PASSWORD
           value: 'admin'
+        - name: GF_INSTALL_PLUGINS
+          value: 'grafana-piechart-panel,grafana-worldmap-panel'
         volumeMounts:
         - name: grafana-config
           mountPath: /etc/grafana/provisioning/datasources/datasources.yml

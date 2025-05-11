@@ -72,7 +72,7 @@ jobs:
       run: |
         minikube stop
         minikube delete
-        minikube start --driver=docker --kubernetes-version=${{ env.K8S_VERSION }} --ports=8080:80,32006:32006,32072:32072,32080:32080 --extra-config=kubelet.housekeeping-interval=10s
+        minikube start --driver=docker --kubernetes-version=${{ env.K8S_VERSION }} --ports=8080:80,32006:32006,32072:32072,32080:32080,31004:31004,31003:31003 --extra-config=kubelet.housekeeping-interval=10s
         minikube status
       shell: powershell
 

@@ -30,9 +30,20 @@ spec:
           value: 'admin'
         volumeMounts:
         - name: grafana-config
-          mountPath: /etc/grafana/provisioning/datasources/prometheus.yml
-          subPath: prometheus.yml
+          mountPath: /etc/grafana/provisioning/datasources/datasources.yml
+          subPath: datasources.yml
+        - name: grafana-dashboards
+          mountPath: /etc/grafana/provisioning/dashboards/dashboards.yml
+          subPath: dashboards.yml
+        - name: grafana-dashboards-json
+          mountPath: /var/lib/grafana/dashboards
       volumes:
       - name: grafana-config
         configMap:
           name: grafana-config
+      - name: grafana-dashboards
+        configMap:
+          name: grafana-config
+      - name: grafana-dashboards-json
+        configMap:
+          name: grafana-dashboards

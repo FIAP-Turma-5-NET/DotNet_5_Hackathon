@@ -4,7 +4,7 @@ metadata:
   name: grafana-config
   namespace: fiap-healthmed
 data:
-  prometheus.yml: |
+  datasources.yml: |
     apiVersion: 1
     datasources:
       - name: prometheus
@@ -13,3 +13,14 @@ data:
         isDefault: true
         jsonData:
           timeInterval: "5s"
+  dashboards.yml: |
+    apiVersion: 1
+    providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards

@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthmed-api
+  namespace: fiap-healthmed
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: healthmed-api
+  template:
+    metadata:
+      labels:
+        app: healthmed-api
+    spec:
+      containers:
+      - name: healthmed-api
+        image: fiap/healthmed-api:1.0.0
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: fiap-healthmed-config
+              key: ASPNETCORE_ENVIRONMENT
+        - name: CONNECTION_MYSQL
+          valueFrom:
+            configMapKeyRef:
+              name: fiap-healthmed-config
+              key: Connection_String
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: fiap-healthmed-secret
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: fiap-healthmed-secret
+              key: MYSQL_PASSWORD
+        - name: Connection_String
+          value: "$(CONNECTION_MYSQL)uid=$(MYSQL_USER);pwd=$(MYSQL_PASSWORD)"
+        - name: MassTransit_Servidor
+          valueFrom:
+            configMapKeyRef:
+              name: fiap-healthmed-config
+              key: MassTransit_Servidor
+        - name: MassTransit_Usuario
+          valueFrom:
+            configMapKeyRef:
+              name: fiap-healthmed-config
+              key: MassTransit_Usuario
+        - name: MassTransit_Senha
+          valueFrom:
+            configMapKeyRef:
+              name: fiap-healthmed-config
+              key: MassTransit_Senha
+        - name: MassTransit_Filas_UsuarioFila
+          valueFrom:
+            configMapKeyRef:
+              name: fiap-healthmed-config
+              key: MassTransit_Filas_UsuarioFila
+        - name: MassTransit_Filas_ConsultaFila
+          valueFrom:
+            configMapKeyRef:
+              name: fiap-healthmed-config
+              key: MassTransit_Filas_ConsultaFila

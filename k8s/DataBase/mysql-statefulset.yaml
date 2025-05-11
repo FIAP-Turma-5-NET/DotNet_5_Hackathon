@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: healthmed-mysql
+  namespace: fiap-healthmed
+spec:
+  serviceName: "healthmed-mysql"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: healthmed-mysql
+  template:
+    metadata:
+      labels:
+        app: healthmed-mysql
+    spec:
+      containers:
+      - name: healthmed-mysql
+        image: mysql:8.0.32
+        args: ["--default-authentication-plugin=mysql_native_password", "--mysqlx=0"]
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: fiap-healthmed-secret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          value: HealthMed
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        - name: config-volume
+          mountPath: /etc/mysql/conf.d
+        - name: init-scripts
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: config-volume
+        configMap:
+          name: fiap-healthmed-config
+      - name: init-scripts
+        configMap:
+          name: fiap-healthmed-config
+          items:
+          - key: init-scripts
+            path: init.sql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi

@@ -64,7 +64,7 @@ services:
       context: ./
       dockerfile: Dockerfile
       target: worker
-    container_name: fiap_healthmed-worker
+    container_name: fiap_healthmed_worker
     environment:
       - DOTNET_ENVIRONMENT=Development
       - Connection_String=Server=mysql;port=3306;database=HealthMed;uid=root;pwd=202406

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthmed-rabbitmq
+  namespace: fiap-healthmed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: healthmed-rabbitmq
+  template:
+    metadata:
+      labels:
+        app: healthmed-rabbitmq
+    spec:
+      containers:
+      - name: rabbitmq
+        image: masstransit/rabbitmq
+        ports:
+        - containerPort: 5672
+        - containerPort: 15672

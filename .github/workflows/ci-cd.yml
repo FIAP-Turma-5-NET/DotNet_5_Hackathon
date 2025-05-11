@@ -56,7 +56,7 @@ jobs:
       run: dotnet restore
 
     - name: Run unit tests
-      run: dotnet test src/tests/FIAP.HealthMed.Tests/FIAP.HealthMed.Tests.csproj --configuration Release
+      run: dotnet test src/FIAP.HealthMed.Tests/FIAP.HealthMed.Tests.csproj --configuration Release
 
   deploy:
     needs: [test]

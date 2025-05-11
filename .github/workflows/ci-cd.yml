@@ -9,6 +9,7 @@ on:
 env:
   DOTNET_VERSION: '9.0.100'
   PROJECT_PATH: 'src/FIAP.HealthMed.API/FIAP.HealthMed.API.csproj'
+  K8S_VERSION: 'v1.29.4'
 
 jobs:
   build:
@@ -67,68 +68,64 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Verificar e Instalar Minikube (PowerShell)
-      shell: pwsh
+    - name: Configurar e iniciar Minikube
       run: |
-        $minikubeExists = Get-Command minikube -ErrorAction SilentlyContinue
-        if (-not $minikubeExists) {
-          Write-Output "Instalando Minikube..."
-          Invoke-WebRequest -OutFile minikube-installer.exe -Uri https://github.com/kubernetes/minikube/releases/latest/download/minikube-installer.exe
-          Start-Process -Wait -FilePath .\minikube-installer.exe
-          Remove-Item -Path .\minikube-installer.exe
-        } else {
-          Write-Output "Minikube já está instalado."
-        }
+        minikube stop
+        minikube delete
+        minikube start --driver=docker --kubernetes-version=${{ env.K8S_VERSION }} --ports=8080:80,32006:32006,32072:32072,32080:32080 --extra-config=kubelet.housekeeping-interval=10s
+        minikube status
+      shell: powershell
 
-    - name: Verificar e Instalar kubectl (PowerShell)
-      shell: pwsh
+    - name: Criar imagens Docker
       run: |
-        $kubectlExists = Get-Command kubectl -ErrorAction SilentlyContinue
-        if (-not $kubectlExists) {
-          Write-Output "Instalando kubectl..."
-          Invoke-WebRequest -OutFile kubectl.exe -Uri https://dl.k8s.io/release/v1.28.0/bin/windows/amd64/kubectl.exe
-          Move-Item -Path kubectl.exe -Destination C:\Windows\System32\kubectl.exe -Force
-        } else {
-          Write-Output "kubectl já está instalado."
-        }
+        & minikube -p minikube docker-env | Invoke-Expression
+        
+        Write-Output "Criando a imagem da API"
+        docker build --target api -f Dockerfile -t fiap/healthmed-api:1.0.0 .
+        
+        Write-Output "Criando a imagem do Worker"
+        docker build --target worker -f Dockerfile -t fiap/healthmed-worker:1.0.0 .
+        
+        Write-Output "Imagens criadas com sucesso!"
+      shell: powershell
 
-    - name: Iniciar Minikube (PowerShell)
-      shell: pwsh
+    - name: Aplicar configurações Kubernetes
       run: |
-        $minikubeStatus = minikube status
-        if ($LASTEXITCODE -ne 0) {
-          Write-Output "Iniciando Minikube..."
-          minikube start --driver=docker
-        } else {
-          Write-Output "Minikube já está em execução."
-        }
+        Set-Location k8s
+        
+        Write-Output ">> Aplicando namespace"
+        kubectl apply -f namespace.yaml
+        
+        Write-Output ">> Aplicando ConfigMap"
+        kubectl apply -f configmap.yaml
+        
+        Write-Output ">> Aplicando Secrets"
+        kubectl apply -f secrets.yaml
+        
+        Write-Output ">> Aplicando recursos do Banco de Dados (MySQL)"
+        kubectl apply -f DataBase/
+        
+        Write-Output ">> Aplicando recursos de Monitoramento (RabbitMQ)"
+        kubectl apply -f Monitoring/
+        
+        Write-Output ">> Aplicando Service da API"
+        kubectl apply -f Application/api-service.yaml
+        
+        Write-Output ">> Aplicando Deployments da Aplicação (API e Worker)"
+        kubectl apply -f Application/api-deployment.yaml
+        kubectl apply -f Application/worker-deployment.yaml
+        
+        Write-Output ">> Aplicando HPAs da Aplicação (API e Worker)"
+        kubectl apply -f Application/hpa-api.yaml
+        kubectl apply -f Application/hpa-worker.yaml
+        
+        Write-Output "Todos os recursos foram aplicados com sucesso!"
+      shell: powershell
 
-    - name: Construir e implantar no Kubernetes (PowerShell)
-      shell: pwsh
+    - name: Verificar status dos pods
       run: |
-        # Definir variáveis para docker build
-        $imageName = "fiap-healthmed-api"
-        $imageTag = "latest"
-        
-        # Apontar docker para o daemon do Minikube
-        minikube -p minikube docker-env | Invoke-Expression
-        
-        # Construir a imagem Docker
-        docker build -t $imageName`:$imageTag -f Dockerfile .
-        
-        # Atualizar ou criar deployment e service
-        kubectl apply -f k8s/deployment.yaml
-        kubectl apply -f k8s/service.yaml
-        
-        # Verificar se o deployment é novo ou existente e fazer o rollout se necessário
-        $deploymentExists = kubectl get deployment healthmed-api -o jsonpath='{.metadata.name}' 2>$null
-        if ($deploymentExists) {
-          Write-Output "Reiniciando o deployment para aplicar as alterações..."
-          kubectl rollout restart deployment healthmed-api
-        }
-        
-        # Verificar status do deployment
-        kubectl rollout status deployment healthmed-api
-        
-        # Obter URL do serviço
-        minikube service healthmed-api --url
+        Write-Output "Aguardando pods iniciarem..."
+        Start-Sleep -Seconds 30
+        kubectl get pods -n healthmed
+        kubectl get services -n healthmed
+      shell: powershell
